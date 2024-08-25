@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
+import 'package:vccinputtablet/utility/sqlite_helper.dart';
+import 'package:vccinputtablet/widgets/show_progress.dart';
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -22,6 +25,40 @@ class _SettingDBState extends State<SettingDB> {
   TextEditingController password = TextEditingController();
   TextEditingController databasename = TextEditingController();
 
+  List<SQLiteModelServerSetting> sqliteModels = [];
+  int cnt_row = 0;
+  bool load = true;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    processReadSQLite();
+  }
+
+  Future<Null> process_count_row(String ip) async {
+    await SQLiteHeltper().getCount(ip).then((value) {
+      print('Count Row: $value');
+      setState(() {
+        cnt_row = value!;
+      });
+    });
+  }
+
+  Future<Null> processReadSQLite() async {
+    await SQLiteHeltper().readSQLite_serverSetting().then((value) {
+      print('value on processReadSQLite ===> $value');
+      setState(() {
+        load = false;
+        sqliteModels = value;
+        server.text = sqliteModels[0].server;
+        username.text = sqliteModels[0].username;
+        password.text = sqliteModels[0].password;
+        databasename.text = sqliteModels[0].databaseName;
+      });
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     //double size = MediaQuery.of(context).size.width;
@@ -43,26 +80,28 @@ class _SettingDBState extends State<SettingDB> {
           icon: Icon(Icons.arrow_back_ios),
         ),
       ),
-      body: LayoutBuilder(
-        builder: (context, constraints) => GestureDetector(
-          onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-          behavior: HitTestBehavior.opaque,
-          child: Form(
-            key: formkey,
-            child: Center(
-              child: ListView(
-                children: [
-                  buildServer(constraints, server),
-                  buildUsername(constraints, username),
-                  buildPassword(constraints, password),
-                  buildDatabaseName(constraints, databasename),
-                  buildSaveButton(constraints),
-                ],
+      body: load
+          ? ShowProgress()
+          : LayoutBuilder(
+              builder: (context, constraints) => GestureDetector(
+                onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+                behavior: HitTestBehavior.opaque,
+                child: Form(
+                  key: formkey,
+                  child: Center(
+                    child: ListView(
+                      children: [
+                        buildServer(constraints, server),
+                        buildUsername(constraints, username),
+                        buildPassword(constraints, password),
+                        buildDatabaseName(constraints, databasename),
+                        buildSaveButton(constraints),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
     );
   }
 
@@ -280,10 +319,25 @@ class _SettingDBState extends State<SettingDB> {
               Icons.save,
               size: 40,
             ),
-            onPressed: () {
+            onPressed: () async {
               if (formkey.currentState!.validate()) {
                 // ignore: avoid_print
-                print("Data: ${server.text} ${username.text} ${password.text} ${databasename.text}");
+                //print("Data: ${server.text} ${username.text} ${password.text} ${databasename.text}");
+
+                //process_count_row(server.text);
+
+                // 1.Delete
+                SQLiteHeltper().delete();
+
+                // 2.Insert
+                SQLiteModelServerSetting data = SQLiteModelServerSetting(
+                    server: server.text,
+                    username: username.text,
+                    password: password.text,
+                    databaseName: databasename.text);
+                await SQLiteHeltper()
+                    .insertValueToSQLite(data)
+                    .then((value) => Navigator.pop(context));
               }
             },
             label: Text(
