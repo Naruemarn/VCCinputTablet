@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -17,6 +16,11 @@ class _SettingDBState extends State<SettingDB> {
   bool statusRedEye = true;
 
   final formkey = GlobalKey<FormState>();
+
+  TextEditingController server = TextEditingController();
+  TextEditingController username = TextEditingController();
+  TextEditingController password = TextEditingController();
+  TextEditingController databasename = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -48,11 +52,11 @@ class _SettingDBState extends State<SettingDB> {
             child: Center(
               child: ListView(
                 children: [
-                  buildServer(constraints),
-                  buildUsername(constraints),
-                  buildPassword(constraints),
-                  buildDatabaseName(constraints),
-                  SaveButton(constraints),
+                  buildServer(constraints, server),
+                  buildUsername(constraints, username),
+                  buildPassword(constraints, password),
+                  buildDatabaseName(constraints, databasename),
+                  buildSaveButton(constraints),
                 ],
               ),
             ),
@@ -64,7 +68,7 @@ class _SettingDBState extends State<SettingDB> {
 
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Row buildServer(BoxConstraints constraints) {
+  Row buildServer(BoxConstraints constraints, TextEditingController inputbox) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -79,6 +83,9 @@ class _SettingDBState extends State<SettingDB> {
                 return null;
               }
             },
+            //keyboardType: TextInputType.number,
+            controller: inputbox,
+            textAlign: TextAlign.center,
             decoration: InputDecoration(
               labelText: 'Server:',
               prefixIcon: Icon(
@@ -106,7 +113,8 @@ class _SettingDBState extends State<SettingDB> {
 
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Row buildUsername(BoxConstraints constraints) {
+  Row buildUsername(
+      BoxConstraints constraints, TextEditingController inputbox) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -121,6 +129,9 @@ class _SettingDBState extends State<SettingDB> {
                 return null;
               }
             },
+            //keyboardType: TextInputType.number,
+            controller: inputbox,
+            textAlign: TextAlign.center,
             decoration: InputDecoration(
               labelText: 'Username:',
               prefixIcon: Icon(
@@ -148,7 +159,8 @@ class _SettingDBState extends State<SettingDB> {
 
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Row buildPassword(BoxConstraints constraints) {
+  Row buildPassword(
+      BoxConstraints constraints, TextEditingController inputbox) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -163,6 +175,9 @@ class _SettingDBState extends State<SettingDB> {
                 return null;
               }
             },
+            //keyboardType: TextInputType.number,
+            controller: inputbox,
+            textAlign: TextAlign.center,
             obscureText: statusRedEye,
             decoration: InputDecoration(
               suffixIcon: IconButton(
@@ -207,7 +222,8 @@ class _SettingDBState extends State<SettingDB> {
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-  Row buildDatabaseName(BoxConstraints constraints) {
+  Row buildDatabaseName(
+      BoxConstraints constraints, TextEditingController inputbox) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -222,6 +238,9 @@ class _SettingDBState extends State<SettingDB> {
                 return null;
               }
             },
+            //keyboardType: TextInputType.number,
+            controller: inputbox,
+            textAlign: TextAlign.center,
             decoration: InputDecoration(
               labelText: 'Database name:',
               prefixIcon: Icon(
@@ -249,7 +268,7 @@ class _SettingDBState extends State<SettingDB> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Row SaveButton(BoxConstraints constraints) {
+  Row buildSaveButton(BoxConstraints constraints) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -262,7 +281,10 @@ class _SettingDBState extends State<SettingDB> {
               size: 40,
             ),
             onPressed: () {
-              if (formkey.currentState!.validate()) {}
+              if (formkey.currentState!.validate()) {
+                // ignore: avoid_print
+                print("Data: ${server.text} ${username.text} ${password.text} ${databasename.text}");
+              }
             },
             label: Text(
               'Save',
