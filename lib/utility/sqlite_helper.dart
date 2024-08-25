@@ -73,8 +73,9 @@ Future<Null> updateValueToSQLite(SQLiteModelServerSetting data) async {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   //ลบข้อมูลจากฐานข้อมูล
   Future<int> delete() async{
+    print('Delete All row ServerSetting');
     Database db = await connectDatabase();
-    return await db.delete(databaseTable);
+    return await db.delete(databaseTable);    
   }
 
 }

@@ -124,7 +124,7 @@ class _SettingDBState extends State<SettingDB> {
             },
             //keyboardType: TextInputType.number,
             controller: inputbox,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
             decoration: InputDecoration(
               labelText: 'Server:',
               prefixIcon: Icon(
@@ -170,7 +170,7 @@ class _SettingDBState extends State<SettingDB> {
             },
             //keyboardType: TextInputType.number,
             controller: inputbox,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
             decoration: InputDecoration(
               labelText: 'Username:',
               prefixIcon: Icon(
@@ -216,7 +216,7 @@ class _SettingDBState extends State<SettingDB> {
             },
             //keyboardType: TextInputType.number,
             controller: inputbox,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
             obscureText: statusRedEye,
             decoration: InputDecoration(
               suffixIcon: IconButton(
@@ -279,7 +279,7 @@ class _SettingDBState extends State<SettingDB> {
             },
             //keyboardType: TextInputType.number,
             controller: inputbox,
-            textAlign: TextAlign.center,
+            textAlign: TextAlign.start,
             decoration: InputDecoration(
               labelText: 'Database name:',
               prefixIcon: Icon(
