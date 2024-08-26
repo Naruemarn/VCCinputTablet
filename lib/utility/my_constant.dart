@@ -11,7 +11,7 @@ class MyConstant {
   static String routeSettingDBpage = '/settingDBpage';
 
   // Image
-  static String image1 = 'images/image1.png';
+  static String image1 = 'images/image1.jpg';
 
   // Color
   static Color primary = Colors.teal;
