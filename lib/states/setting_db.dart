@@ -46,7 +46,7 @@ class _SettingDBState extends State<SettingDB> {
   }
 
   Future<Null> processReadSQLite() async {
-    await SQLiteHeltper().readSQLite_serverSetting().then((value) {
+    await SQLiteHeltper().readsqlite_serversetting().then((value) {
       print('value on processReadSQLite ===> $value');
       setState(() {
         load = false;
@@ -95,7 +95,15 @@ class _SettingDBState extends State<SettingDB> {
                         buildUsername(constraints, username),
                         buildPassword(constraints, password),
                         buildDatabaseName(constraints, databasename),
-                        buildSaveButton(constraints),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            buildSaveButton(constraints),
+                            SizedBox(width: 10),
+                            buildCancelButton(constraints),
+                          ],
+                        ),
+                        
                       ],
                     ),
                   ),
@@ -313,11 +321,11 @@ class _SettingDBState extends State<SettingDB> {
       children: [
         Container(
           margin: EdgeInsets.only(top: 16),
-          width: constraints.maxWidth * 0.4,
+          width: constraints.maxWidth * 0.3,
           child: ElevatedButton.icon(
             icon: const Icon(
-              Icons.save,
-              size: 40,
+              Icons.save_as_outlined,
+              size: 30,
             ),
             onPressed: () async {
               if (formkey.currentState!.validate()) {
@@ -342,7 +350,7 @@ class _SettingDBState extends State<SettingDB> {
             },
             label: Text(
               'Save',
-              style: TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
             ),
             style: ElevatedButton.styleFrom(
                 backgroundColor: Colors.teal, foregroundColor: Colors.white),
@@ -353,4 +361,33 @@ class _SettingDBState extends State<SettingDB> {
   }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Row buildCancelButton(BoxConstraints constraints) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Container(
+          margin: EdgeInsets.only(top: 16),
+          width: constraints.maxWidth * 0.3,
+          child: ElevatedButton.icon(
+            icon: const Icon(
+              Icons.cancel_outlined,
+              size: 30,
+            ),
+            onPressed: ()  {
+              Navigator.pop(context);
+            },
+            label: Text(
+              'Cancel',
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
+            ),
+            style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.teal, foregroundColor: Colors.white),
+          ),
+        ),
+      ],
+    );
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
@@ -33,7 +33,7 @@ class SQLiteHeltper {
   }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Future<List<SQLiteModelServerSetting>> readSQLite_serverSetting() async {
+Future<List<SQLiteModelServerSetting>> readsqlite_serversetting() async {
   Database db = await connectDatabase();
   List<SQLiteModelServerSetting> results = [];
   List<Map<String, dynamic>> maps = await db.query(databaseTable);
