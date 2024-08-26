@@ -101,16 +101,18 @@ class _HomepageState extends State<Homepage> {
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       build_jobid(job_id),
                       build_design_code(design_code),
                       build_alloy(alloy),
                       build_flask_temp(flask_temp),
                       build_weight(weight_),
-                      build_use_no(),
+                      buildTitle('* Use or No'),
                       build_wax_wax3d_resin(),
                     ],
                   ),
@@ -120,7 +122,6 @@ class _HomepageState extends State<Homepage> {
                       build_recommend_to_fill(),
                     ],
                   ),
-
                 ],
               ),
             ],
@@ -137,13 +138,13 @@ class _HomepageState extends State<Homepage> {
       margin: EdgeInsets.only(left: 6, right: 6, top: 8),
       color: MyConstant.dark,
       height: 220,
-      width: 330,
+      width: 345,
       child: FittedBox(
         fit: BoxFit.fill,
         child: Card(
           child: Image.asset(
             MyConstant.image1,
-            width: 330.0,
+            width: 345.0,
           ),
         ),
       ),
@@ -174,19 +175,19 @@ class _HomepageState extends State<Homepage> {
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Wax (3D)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Resin',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 10,
-                    fontWeight: FontWeight.normal,
+                    fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
           onPressed: (int index) {
@@ -214,19 +215,21 @@ class _HomepageState extends State<Homepage> {
               color: Colors.black)),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_use_no() {
+  Widget buildTitle(String msg) {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 8),
-      child: Text('* Use or No',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              fontSize: 10,
-              fontWeight: FontWeight.normal,
-              color: Colors.black)),
+      //color: Colors.amberAccent,
+      child: Text(
+        msg,
+        style: TextStyle(
+            fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+      ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_weight(TextEditingController inputbox) {
