@@ -34,6 +34,8 @@ class _HomepageState extends State<Homepage> {
   ];
   String? selectedValue;
 
+  String? serial_number = 'S/N:';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -87,7 +89,7 @@ class _HomepageState extends State<Homepage> {
           key: formkey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
+            children: [              
               Container(
                 child: Row(
                   children: [
@@ -113,17 +115,19 @@ class _HomepageState extends State<Homepage> {
                       build_flask_temp(flask_temp),
                       build_weight(weight_),
                       buildTitle('* Use or No'),
-                      build_wax_wax3d_resin(),
+                      build_wax_wax3d_resin(),                                               
                     ],
-                  ),
+                  ),                  
                   Column(
                     children: [
                       build_image(),
                       build_recommend_to_fill(),
+                      
                     ],
                   ),
                 ],
               ),
+              Divider(),  
             ],
           ),
         ),
@@ -252,7 +256,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* WEIGHT : max 3 digits',
+          labelText: '* WEIGHT :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
@@ -293,7 +297,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* FLASK TEMP : max 4 digits',
+          labelText: '* FLASK TEMP :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
@@ -334,7 +338,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* ALLOY : max 15 digits',
+          labelText: '* ALLOY :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
@@ -374,7 +378,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* DESIGN CODE : max 15 digits',
+          labelText: '* DESIGN CODE :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
@@ -414,7 +418,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* JOB ID : max 15 digits',
+          labelText: '* JOB ID :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
@@ -454,7 +458,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: 'Recipe name : max 17 digits',
+          labelText: 'Recipe name :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
@@ -559,8 +563,8 @@ class _HomepageState extends State<Homepage> {
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Text(
-          'S/N:W3491',
-          textAlign: TextAlign.center,
+          serial_number!,
+          textAlign: TextAlign.start,
           style: TextStyle(
               color: Colors.black, fontSize: 10, fontWeight: FontWeight.normal),
         ),
