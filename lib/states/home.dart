@@ -6,6 +6,7 @@ import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 import 'package:vccinputtablet/widgets/show_image.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -22,6 +23,9 @@ class _HomepageState extends State<Homepage> {
   var isSelected3 = [true, false, false]; // No, Argon, Nitrogen
   var isSelected4 = [true, false, false, false]; // No, 1times, 2times, 3times
   var isSelected5 = [true, false, false]; // Normal , Release, Keep
+  var isSelected6 = [true, false]; // On , Off
+
+  bool status_toggle = false;
 
   TextEditingController recipe_name = TextEditingController();
   TextEditingController job_id = TextEditingController();
@@ -31,6 +35,26 @@ class _HomepageState extends State<Homepage> {
   TextEditingController weight_ = TextEditingController();
 
   TextEditingController temp_setting_value = TextEditingController();
+  TextEditingController max_heatpower = TextEditingController();
+  TextEditingController s_curve = TextEditingController();
+  TextEditingController acceleration = TextEditingController();
+  TextEditingController rotation = TextEditingController();
+  TextEditingController pressure_pv = TextEditingController();
+  TextEditingController rotation_time = TextEditingController();
+  TextEditingController exh_timeing = TextEditingController();
+
+  TextEditingController origin_point = TextEditingController();
+  TextEditingController arm_origin_speed = TextEditingController();
+
+  TextEditingController zero_point_adjust = TextEditingController();
+
+  TextEditingController emissivity = TextEditingController();
+
+  TextEditingController casting_keep_time = TextEditingController();
+  TextEditingController casting_range_degree = TextEditingController();
+  TextEditingController p_ = TextEditingController();
+  TextEditingController i_ = TextEditingController();
+  TextEditingController d_ = TextEditingController();
 
   final List<String> items = [
     'Item1',
@@ -45,6 +69,7 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'VCC Input Data',
@@ -107,6 +132,8 @@ class _HomepageState extends State<Homepage> {
                   ],
                 ),
               ),
+              SizedBox(height: 15),
+              Divider(),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -132,35 +159,134 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ],
               ),
+              SizedBox(height: 15),
               Divider(),
               Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Column(
                     children: [
-                      buildTitle('Mode1',6,0),
-                      build_manual_auto_button(),                      
+                      buildTitle('Mode1', 6, 0),
+                      build_manual_auto_button(),
                     ],
-                  ),                  
+                  ),
                   Column(
                     children: [
-                      buildTitle('Inert-Gas',50,0),
+                      buildTitle('Inert-Gas', 50, 0),
                       build_InertGas(),
                     ],
                   ),
                   Column(
                     children: [
-                      buildTitle('Air-Wash',6,0),
+                      buildTitle('Air-Wash', 6, 0),
                       build_airwash(),
                     ],
                   ),
-                  
                 ],
               ),
-              build_temp_setting(temp_setting_value),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  build_temp_setting(temp_setting_value),
+                  build_max_heatpower(max_heatpower),
+                  build_s_curve(s_curve),
+                  build_acceleration(acceleration),
+                ],
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  build_rotation(rotation),
+                  build_pressure_pv(pressure_pv),
+                  build_rotation_time(rotation_time),
+                  build_exh_timing(exh_timeing),
+                ],
+              ),
+              SizedBox(height: 15),
+              Divider(),
+              Row(
+                children: [
+                  Column(
+                    children: [
+                      buildTitle('Mode2', 6, 0),
+                      build_normal_release_keep(),
+                    ],
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  buildTitle_with_backgroundColor('GENERAL SETTING', 6, 8,
+                      Color.fromARGB(255, 23, 207, 170), 252),
+                  buildTitle_with_backgroundColor('PRESSURE SENSOR', 12, 8,
+                      Color.fromARGB(95, 36, 106, 236), 120),
+                ],
+              ),
+              Row(
+                children: [
+                  build_origin_point(origin_point),
+                  build_arm_origin_speed(arm_origin_speed),
+                  build_zero_point_adjust(zero_point_adjust),
+                ],
+              ),
+              buildTitle_with_backgroundColor('THERMO SENSOR', 6, 8,
+                  Color.fromARGB(255, 10, 124, 232), 252),
+              Row(
+                children: [
+                  buildTitle('Laser light:', 6, 0),
+                  //build_toggle_switch_laser_light(),
+                  build_laserlight_onoff(),
+                  build_zero_emissivity(emissivity),
+                ],
+              ),
+              // SizedBox(height: 10),
+              // Divider(),
+              buildTitle_with_backgroundColor_tempcontroller(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  build_casting_keep_time(casting_keep_time),
+                  build_casting_range_degree(casting_range_degree),
+                  build_p(p_),
+                  build_i(i_),
+                  build_d(d_),
+                ],
+              ),
             ],
           ),
         ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Container build_toggle_switch_laser_light() {
+    return Container(
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 60,
+      //color: Colors.pink,
+      child: FlutterSwitch(
+        width: 60.0,
+        height: 30.0,
+        activeColor: Colors.lightGreen,
+        activeText: 'ON',
+        inactiveText: 'OFF',
+        activeTextColor: Colors.black,
+        inactiveTextColor: Colors.black,
+        valueFontSize: 10.0,
+        toggleSize: 20.0,
+        value: status_toggle,
+        borderRadius: 30.0,
+        padding: 4.0,
+        showOnOff: true,
+        onToggle: (val) {
+          setState(() {
+            status_toggle = val;
+            print('Thermo sensor: $status_toggle');
+          });
+        },
       ),
     );
   }
@@ -191,7 +317,7 @@ class _HomepageState extends State<Homepage> {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 8),
       height: 30,
-      width: 170,
+      //width: 170,
       //color: Colors.pink,
       child: FittedBox(
         fit: BoxFit.fill,
@@ -237,9 +363,11 @@ class _HomepageState extends State<Homepage> {
   }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_airwash() {
+  Widget build_laserlight_onoff() {
     return Container(
-      margin: EdgeInsets.only(left: 6,),
+      margin: EdgeInsets.only(
+        left: 6,
+      ),
       height: 30,
       //color: Colors.pink,
       child: FittedBox(
@@ -253,14 +381,147 @@ class _HomepageState extends State<Homepage> {
           splashColor: Colors.blue,
           borderRadius: BorderRadius.circular(10),
           children: [
-            Text('No',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
-            Text('1times',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
-            Text('2times',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
-            Text('3times',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('On',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('Off',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),           
           ],
           onPressed: (int index) {
             setState(() {
-              for (int buttonIndex = 0; buttonIndex < isSelected4.length; buttonIndex++) {
+              for (int buttonIndex = 0;
+                  buttonIndex < isSelected6.length;
+                  buttonIndex++) {
+                if (buttonIndex == index) {
+                  isSelected6[buttonIndex] = true;
+                } else {
+                  isSelected6[buttonIndex] = false;
+                }
+                print("Laser light : ${isSelected6}");
+              }
+            });
+          },
+          isSelected: isSelected6,
+        ),
+      ),
+    );
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_normal_release_keep() {
+    return Container(
+      margin: EdgeInsets.only(
+        left: 6,
+      ),
+      height: 30,
+      //color: Colors.pink,
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: ToggleButtons(
+          fillColor: Colors.lightGreen,
+          selectedColor: Colors.purple,
+          borderColor: Colors.blueGrey,
+          borderWidth: 2,
+          selectedBorderColor: Colors.blue,
+          splashColor: Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+          children: [
+            Text('Normal',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('Release',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('Keep',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+          ],
+          onPressed: (int index) {
+            setState(() {
+              for (int buttonIndex = 0;
+                  buttonIndex < isSelected5.length;
+                  buttonIndex++) {
+                if (buttonIndex == index) {
+                  isSelected5[buttonIndex] = true;
+                } else {
+                  isSelected5[buttonIndex] = false;
+                }
+                print("Normal Release Keep : ${isSelected5}");
+              }
+            });
+          },
+          isSelected: isSelected5,
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_airwash() {
+    return Container(
+      margin: EdgeInsets.only(
+        left: 6,
+      ),
+      height: 30,
+      //color: Colors.pink,
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: ToggleButtons(
+          fillColor: Colors.lightGreen,
+          selectedColor: Colors.purple,
+          borderColor: Colors.blueGrey,
+          borderWidth: 2,
+          selectedBorderColor: Colors.blue,
+          splashColor: Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+          children: [
+            Text('No',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('1times',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('2times',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('3times',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+          ],
+          onPressed: (int index) {
+            setState(() {
+              for (int buttonIndex = 0;
+                  buttonIndex < isSelected4.length;
+                  buttonIndex++) {
                 if (buttonIndex == index) {
                   isSelected4[buttonIndex] = true;
                 } else {
@@ -275,11 +536,14 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_InertGas() {
     return Container(
-      margin: EdgeInsets.only(left: 50,),
+      margin: EdgeInsets.only(
+        left: 50,
+      ),
       height: 30,
       //color: Colors.pink,
       child: FittedBox(
@@ -293,13 +557,30 @@ class _HomepageState extends State<Homepage> {
           splashColor: Colors.blue,
           borderRadius: BorderRadius.circular(10),
           children: [
-            Text('No',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
-            Text('Argon',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
-            Text('Nitrogen',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('No',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('Argon',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('Nitrogen',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
           ],
           onPressed: (int index) {
             setState(() {
-              for (int buttonIndex = 0; buttonIndex < isSelected3.length; buttonIndex++) {
+              for (int buttonIndex = 0;
+                  buttonIndex < isSelected3.length;
+                  buttonIndex++) {
                 if (buttonIndex == index) {
                   isSelected3[buttonIndex] = true;
                 } else {
@@ -314,11 +595,14 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_manual_auto_button() {
     return Container(
-      margin: EdgeInsets.only(left: 6,),
+      margin: EdgeInsets.only(
+        left: 6,
+      ),
       height: 30,
       //color: Colors.pink,
       child: FittedBox(
@@ -332,12 +616,24 @@ class _HomepageState extends State<Homepage> {
           splashColor: Colors.blue,
           borderRadius: BorderRadius.circular(10),
           children: [
-            Text('Manual',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
-            Text('Auto',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('Manual',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
+            Text('Auto',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black)),
           ],
           onPressed: (int index) {
             setState(() {
-              for (int buttonIndex = 0; buttonIndex < isSelected2.length; buttonIndex++) {
+              for (int buttonIndex = 0;
+                  buttonIndex < isSelected2.length;
+                  buttonIndex++) {
                 if (buttonIndex == index) {
                   isSelected2[buttonIndex] = true;
                 } else {
@@ -352,6 +648,7 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_recommend_to_fill() {
@@ -363,6 +660,44 @@ class _HomepageState extends State<Homepage> {
               fontSize: 10,
               fontWeight: FontWeight.normal,
               color: Colors.black)),
+    );
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget buildTitle_with_backgroundColor_tempcontroller() {
+    return Container(
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      color: Colors.pink[400],
+      height: 20,
+      child: Center(
+        child: Text(
+          'TEMP.CONTROLLER',
+          style: TextStyle(
+              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+          textAlign: TextAlign.center,
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget buildTitle_with_backgroundColor(
+      String msg, double left_, double top_, Color x, double w) {
+    return Container(
+      margin: EdgeInsets.only(left: left_, top: top_),
+      height: 20,
+      width: w,
+      color: x,
+      child: Center(
+        child: Text(
+          msg,
+          style: TextStyle(
+              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+          textAlign: TextAlign.center,
+        ),
+      ),
     );
   }
 
@@ -379,14 +714,671 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_casting_keep_time(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 90,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Casting Keep Time';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Casting Keep Time :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('sec'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_casting_range_degree(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 90,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Casting Range Degree';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Casting Range Degree :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('℃'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_p(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 90,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill P';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'P :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          //suffix: Text('rpm'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_i(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 90,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill I';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'I :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          //suffix: Text('rpm'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_d(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 90,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill D';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'D :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          //suffix: Text('rpm'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_zero_emissivity(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 12, right: 6, top: 1),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Emissivity';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Emissivity :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('rpm'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_zero_point_adjust(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Zero Point Adjust';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Zero Point Adjust :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('kPa'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_arm_origin_speed(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill ARM Origin Speed';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'ARM Origin Speed :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('rpm'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_origin_point(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Origin Point';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Origin Point :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          //suffix: Text('sec'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_exh_timing(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill EXH-Timing';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'EXH-Timing :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('sec'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_rotation_time(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Rotation Time';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Rotation Time :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('sec'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_pressure_pv(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Pressure PV';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Pressure PV :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('kPa'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_rotation(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Rotation';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Rotation :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('rpm'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_acceleration(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Acceleration';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Accelerarion :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('sec'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_s_curve(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill S-Curve';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'S-Curve :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          //suffix: Text('%'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_max_heatpower(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      height: 30,
+      width: 120,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill Max Heat Power';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'Max Heat Power :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('%'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_temp_setting(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, top: 8),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
       height: 30,
-      width: 130,
+      width: 120,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
@@ -419,6 +1411,7 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_weight(TextEditingController inputbox) {
