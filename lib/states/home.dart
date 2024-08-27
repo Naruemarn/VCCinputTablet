@@ -1,11 +1,17 @@
+import 'dart:convert';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:vccinputtablet/models/machine_model.dart';
+import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
 import 'package:vccinputtablet/states/input.dart';
 import 'package:vccinputtablet/states/recipelist.dart';
 import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
+import 'package:vccinputtablet/utility/sqlite_helper.dart';
 import 'package:vccinputtablet/widgets/show_image.dart';
 import 'package:flutter_switch/flutter_switch.dart';
 
@@ -57,16 +63,123 @@ class _HomepageState extends State<Homepage> {
   TextEditingController i_ = TextEditingController();
   TextEditingController d_ = TextEditingController();
 
-  final List<String> items = [
-    'Item1',
-    'Item2',
-    'Item3',
-    'Item4',
-  ];
+  List<String> listMachineName = [];
+  List<String> listSerial = [];
   String? selectedValue;
 
   String? serial_number = 'S/N:';
 
+  // Database
+  MachineModel? machineModel;
+  List<SQLiteModelServerSetting> sqliteModels = [];
+  bool load = true;
+  int? cnt_server_config;
+  String? server;
+  String? username;
+  String? password;
+  String? databasename;
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> process_count_row() async {
+    await SQLiteHeltper().getCount().then((value) async {
+      //print('Count Row: $value');
+      if (value! > 0) {
+        processReadSQLite();
+      } else {
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => SettingDB()))
+            .then((value) => processReadSQLite());
+      }
+
+      setState(() {
+        cnt_server_config = value!;
+      });
+    });
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> processReadSQLite() async {
+    await SQLiteHeltper().readsqlite_serversetting().then((value) async {
+      print('value on processReadSQLite ===> $value');
+      setState(() {
+        load = false;
+        sqliteModels = value;
+        server = sqliteModels[0].server;
+        username = sqliteModels[0].username;
+        password = sqliteModels[0].password;
+        databasename = sqliteModels[0].databaseName;
+        print('Read Server Config: $server $username $password $databasename');
+      });
+
+      // Read From Server
+
+      try {
+        String api_get_machinename_sn =
+            'http://$server/vcc/get_data.php?server=$server&user=$username&password=$password&db_name=$databasename';
+
+        await Dio().get(api_get_machinename_sn).then((value) {
+          print('Read M/C S/N: $value');
+
+          listMachineName = [];
+          for (var item in json.decode(value.data)) {
+            setState(() {
+              machineModel = MachineModel.fromMap(item);
+              listMachineName.add(machineModel!.machine_name);
+              listSerial.add(machineModel!.serial);
+            });
+          }
+        });
+      } on DioException catch (e) {
+        cannot_access_server_popup();
+      }
+    });
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Future<void> cannot_access_server_popup() async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: ListTile(
+          //leading: ShowImage(path: MyConstant.confirm),
+          leading: Icon(Icons.error_outline, color: Colors.red,size: 50,),
+          title: Text('Can not access server.',
+            style: TextStyle(
+                fontSize: 20, fontWeight: FontWeight.normal, color: Colors.blue),
+          ),
+          //subtitle: Text('Are you sure?', style: TextStyle(color: Colors.teal),),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {             
+              Navigator.pop(context);
+            },
+            child: Text(
+              'OK',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue),
+            ),
+          ),          
+        ],
+      ),
+    );
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    process_count_row();
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -75,18 +188,22 @@ class _HomepageState extends State<Homepage> {
         title: Text(
           'VCC INPUT DATA',
           style: TextStyle(
-              color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold, shadows: <Shadow>[
-      Shadow(
-        offset: Offset(10.0, 10.0),
-        blurRadius: 3.0,
-        color: Color.fromARGB(255, 0, 0, 0),
-      ),
-      Shadow(
-        offset: Offset(10.0, 10.0),
-        blurRadius: 8.0,
-        color: Color.fromARGB(125, 0, 0, 255),
-      ),
-    ],),
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            shadows: <Shadow>[
+              Shadow(
+                offset: Offset(10.0, 10.0),
+                blurRadius: 3.0,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+              Shadow(
+                offset: Offset(10.0, 10.0),
+                blurRadius: 8.0,
+                color: Color.fromARGB(125, 0, 0, 255),
+              ),
+            ],
+          ),
         ),
         foregroundColor: Colors.white,
         backgroundColor: Colors.blueAccent,
@@ -105,9 +222,8 @@ class _HomepageState extends State<Homepage> {
           //     )),
           IconButton(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => SettingDB()),
-                );
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) => SettingDB()));
               },
               icon: const Icon(
                 Icons.settings,
@@ -136,7 +252,7 @@ class _HomepageState extends State<Homepage> {
               Container(
                 child: Row(
                   children: [
-                    build_selectMachine(context),                    
+                    build_selectMachine(context),
                     build_recipelistbutton(),
                     build_recipe_name(recipe_name),
                     build_uploadtbutton(),
@@ -158,7 +274,7 @@ class _HomepageState extends State<Homepage> {
                           build_serialnumber(),
                           build_wax_wax3d_resin(),
                         ],
-                      ),                      
+                      ),
                       build_jobid(job_id),
                       build_design_code(design_code),
                       build_alloy(alloy),
@@ -252,7 +368,7 @@ class _HomepageState extends State<Homepage> {
                   buildTitle('Laser light:', 6, 0),
                   //build_toggle_switch_laser_light(),
                   build_laserlight_onoff(),
-                  build_zero_emissivity(emissivity),
+                  build_emissivity(emissivity),
                 ],
               ),
               // SizedBox(height: 10),
@@ -386,9 +502,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_laserlight_onoff() {
     return Container(
-      margin: EdgeInsets.only(
-        left: 6,
-      ),
+      margin: EdgeInsets.only(left: 6, right: 2),
       height: 30,
       //color: Colors.pink,
       child: FittedBox(
@@ -944,7 +1058,7 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_zero_emissivity(TextEditingController inputbox) {
+  Widget build_emissivity(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
       margin: EdgeInsets.only(left: 12, right: 6, top: 1),
@@ -1744,11 +1858,7 @@ class _HomepageState extends State<Homepage> {
         gradient: RadialGradient(
             //stops: [0.0, 1],
             radius: 1.5,
-            colors: [
-              Colors.white,
-              Colors.amberAccent.shade100,
-              Colors.amber
-            ],
+            colors: [Colors.white, Colors.amberAccent.shade100, Colors.amber],
             center: Alignment.center,
             tileMode: TileMode.clamp),
         color: Colors.amberAccent,
@@ -1756,7 +1866,8 @@ class _HomepageState extends State<Homepage> {
       ),
       child: ElevatedButton.icon(
         onPressed: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecipeList()));
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => RecipeList()));
         },
         icon: Icon(Icons.list,
             color: Colors.white), //icon data for elevated button
@@ -1764,7 +1875,7 @@ class _HomepageState extends State<Homepage> {
           "Recipe List",
           style: TextStyle(
               color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
-              textAlign: TextAlign.center,
+          textAlign: TextAlign.center,
         ), //label text
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -1780,7 +1891,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Container build_serialnumber() {
     return Container(
-      margin: EdgeInsets.only(left:6, top: 6),
+      margin: EdgeInsets.only(left: 6, top: 6),
       height: 30,
       width: 76,
       color: Colors.lightBlueAccent,
@@ -1830,7 +1941,7 @@ class _HomepageState extends State<Homepage> {
               ),
             ],
           ),
-          items: items
+          items: listMachineName
               .map((String item) => DropdownMenuItem<String>(
                     value: item,
                     child: Text(
@@ -1848,6 +1959,9 @@ class _HomepageState extends State<Homepage> {
           onChanged: (value) {
             setState(() {
               selectedValue = value;
+              int selectedIndex = listMachineName.indexOf(selectedValue!);
+              serial_number = 'S/N:' + listSerial[selectedIndex];
+              //print('Select Machine Index: ${listMachineName.indexOf(selectedValue!)}');
             });
           },
           buttonStyleData: ButtonStyleData(

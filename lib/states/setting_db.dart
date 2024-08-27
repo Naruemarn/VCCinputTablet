@@ -26,21 +26,32 @@ class _SettingDBState extends State<SettingDB> {
   TextEditingController databasename = TextEditingController();
 
   List<SQLiteModelServerSetting> sqliteModels = [];
-  int cnt_row = 0;
+  int cnt_server_config = 0;
   bool load = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    processReadSQLite();
-  }
 
-  Future<Null> process_count_row(String ip) async {
-    await SQLiteHeltper().getCount(ip).then((value) {
-      print('Count Row: $value');
+    process_count_row().then((value) {
+      print('Cnt Row Server Config: $cnt_server_config');
+      if (cnt_server_config > 0) {
+        load = true;
+        processReadSQLite();
+      } else {
+        load = false;
+      }
+    });
+    
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> process_count_row() async {
+    await SQLiteHeltper().getCount().then((value) {
+      //print('Count Row: $value');
       setState(() {
-        cnt_row = value!;
+        cnt_server_config = value!;
       });
     });
   }

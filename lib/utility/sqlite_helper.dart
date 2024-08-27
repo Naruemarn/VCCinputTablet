@@ -57,9 +57,10 @@ Future<Null> insertValueToSQLite(SQLiteModelServerSetting data) async{
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Future<int?> getCount(String serverIP) async {
+Future<int?> getCount() async {
     Database db = await connectDatabase();
-    var x = await db.rawQuery('SELECT COUNT (*) FROM $databaseTable WHERE $columnServer=?', [serverIP]);
+    //var x = await db.rawQuery('SELECT COUNT (*) FROM $databaseTable WHERE $columnServer=?', [serverIP]);
+    var x = await db.rawQuery('SELECT COUNT (*) FROM $databaseTable');
     int? count = Sqflite.firstIntValue(x);
     return count;
 }
