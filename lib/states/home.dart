@@ -17,7 +17,11 @@ class Homepage extends StatefulWidget {
 class _HomepageState extends State<Homepage> {
   final formkey = GlobalKey<FormState>();
 
-  var isSelected1 = [true, false, false];
+  var isSelected1 = [true, false, false]; // Wax , Wax (3D), Resin
+  var isSelected2 = [true, false]; // Manual , Auto
+  var isSelected3 = [true, false, false]; // No, Argon, Nitrogen
+  var isSelected4 = [true, false, false, false]; // No, 1times, 2times, 3times
+  var isSelected5 = [true, false, false]; // Normal , Release, Keep
 
   TextEditingController recipe_name = TextEditingController();
   TextEditingController job_id = TextEditingController();
@@ -25,6 +29,8 @@ class _HomepageState extends State<Homepage> {
   TextEditingController alloy = TextEditingController();
   TextEditingController flask_temp = TextEditingController();
   TextEditingController weight_ = TextEditingController();
+
+  TextEditingController temp_setting_value = TextEditingController();
 
   final List<String> items = [
     'Item1',
@@ -89,7 +95,7 @@ class _HomepageState extends State<Homepage> {
           key: formkey,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [              
+            children: [
               Container(
                 child: Row(
                   children: [
@@ -109,25 +115,49 @@ class _HomepageState extends State<Homepage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      build_wax_wax3d_resin(),
                       build_jobid(job_id),
                       build_design_code(design_code),
                       build_alloy(alloy),
                       build_flask_temp(flask_temp),
                       build_weight(weight_),
-                      buildTitle('* Use or No'),
-                      build_wax_wax3d_resin(),                                               
+                      //buildTitle('* Use or No'),
                     ],
-                  ),                  
+                  ),
                   Column(
                     children: [
                       build_image(),
                       build_recommend_to_fill(),
-                      
                     ],
                   ),
                 ],
               ),
-              Divider(),  
+              Divider(),
+              Row(
+                //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  Column(
+                    children: [
+                      buildTitle('Mode1',6,0),
+                      build_manual_auto_button(),                      
+                    ],
+                  ),                  
+                  Column(
+                    children: [
+                      buildTitle('Inert-Gas',50,0),
+                      build_InertGas(),
+                    ],
+                  ),
+                  Column(
+                    children: [
+                      buildTitle('Air-Wash',6,0),
+                      build_airwash(),
+                    ],
+                  ),
+                  
+                ],
+              ),
+              build_temp_setting(temp_setting_value),
             ],
           ),
         ),
@@ -159,7 +189,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_wax_wax3d_resin() {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 0),
+      margin: EdgeInsets.only(left: 6, top: 8),
       height: 30,
       width: 170,
       //color: Colors.pink,
@@ -205,7 +235,123 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_airwash() {
+    return Container(
+      margin: EdgeInsets.only(left: 6,),
+      height: 30,
+      //color: Colors.pink,
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: ToggleButtons(
+          fillColor: Colors.lightGreen,
+          selectedColor: Colors.purple,
+          borderColor: Colors.blueGrey,
+          borderWidth: 2,
+          selectedBorderColor: Colors.blue,
+          splashColor: Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+          children: [
+            Text('No',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('1times',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('2times',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('3times',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+          ],
+          onPressed: (int index) {
+            setState(() {
+              for (int buttonIndex = 0; buttonIndex < isSelected4.length; buttonIndex++) {
+                if (buttonIndex == index) {
+                  isSelected4[buttonIndex] = true;
+                } else {
+                  isSelected4[buttonIndex] = false;
+                }
+                print("Air-Wash : ${isSelected4}");
+              }
+            });
+          },
+          isSelected: isSelected4,
+        ),
+      ),
+    );
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_InertGas() {
+    return Container(
+      margin: EdgeInsets.only(left: 50,),
+      height: 30,
+      //color: Colors.pink,
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: ToggleButtons(
+          fillColor: Colors.lightGreen,
+          selectedColor: Colors.purple,
+          borderColor: Colors.blueGrey,
+          borderWidth: 2,
+          selectedBorderColor: Colors.blue,
+          splashColor: Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+          children: [
+            Text('No',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('Argon',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('Nitrogen',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+          ],
+          onPressed: (int index) {
+            setState(() {
+              for (int buttonIndex = 0; buttonIndex < isSelected3.length; buttonIndex++) {
+                if (buttonIndex == index) {
+                  isSelected3[buttonIndex] = true;
+                } else {
+                  isSelected3[buttonIndex] = false;
+                }
+                print("Inert-Gas : ${isSelected3}");
+              }
+            });
+          },
+          isSelected: isSelected3,
+        ),
+      ),
+    );
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_manual_auto_button() {
+    return Container(
+      margin: EdgeInsets.only(left: 6,),
+      height: 30,
+      //color: Colors.pink,
+      child: FittedBox(
+        fit: BoxFit.fill,
+        child: ToggleButtons(
+          fillColor: Colors.lightGreen,
+          selectedColor: Colors.purple,
+          borderColor: Colors.blueGrey,
+          borderWidth: 2,
+          selectedBorderColor: Colors.blue,
+          splashColor: Colors.blue,
+          borderRadius: BorderRadius.circular(10),
+          children: [
+            Text('Manual',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+            Text('Auto',textAlign: TextAlign.center,style: TextStyle(fontSize: 10,fontWeight: FontWeight.bold,color: Colors.black)),
+          ],
+          onPressed: (int index) {
+            setState(() {
+              for (int buttonIndex = 0; buttonIndex < isSelected2.length; buttonIndex++) {
+                if (buttonIndex == index) {
+                  isSelected2[buttonIndex] = true;
+                } else {
+                  isSelected2[buttonIndex] = false;
+                }
+                print("Manaul Auto : ${isSelected2}");
+              }
+            });
+          },
+          isSelected: isSelected2,
+        ),
+      ),
+    );
+  }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_recommend_to_fill() {
@@ -222,9 +368,9 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget buildTitle(String msg) {
+  Widget buildTitle(String msg, double left_, double top_) {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 8),
+      margin: EdgeInsets.only(left: left_, top: top_),
       //color: Colors.amberAccent,
       child: Text(
         msg,
@@ -233,7 +379,46 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Widget build_temp_setting(TextEditingController inputbox) {
+    return Container(
+      //color: Colors.pink,
+      margin: EdgeInsets.only(left: 6, top: 8),
+      height: 30,
+      width: 130,
+      child: TextFormField(
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'Please Fill TEMP. Setting Value';
+          } else {
+            return null;
+          }
+        },
+        keyboardType: TextInputType.number,
+        controller: inputbox,
+        //maxLength: 3,
+        style: TextStyle(fontSize: 10),
+        textAlign: TextAlign.start,
+        decoration: InputDecoration(
+          labelText: 'TEMP. Seting Value :',
+          labelStyle: TextStyle(fontSize: 10),
+          hintStyle: TextStyle(fontSize: 10),
+          counterText: "",
+          suffix: Text('℃'),
+          border: OutlineInputBorder(
+            borderSide: BorderSide(width: 1, color: MyConstant.dark),
+          ),
+          enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+          focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.light)),
+          errorBorder: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: Colors.red)),
+        ),
+      ),
+    );
+  }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_weight(TextEditingController inputbox) {
@@ -250,7 +435,7 @@ class _HomepageState extends State<Homepage> {
             return null;
           }
         },
-        //keyboardType: TextInputType.number,
+        keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 3,
         style: TextStyle(fontSize: 10),
@@ -260,7 +445,7 @@ class _HomepageState extends State<Homepage> {
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
-          suffix: Text('g'),
+          suffix: Text('℃'),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
           ),
@@ -291,7 +476,7 @@ class _HomepageState extends State<Homepage> {
             return null;
           }
         },
-        //keyboardType: TextInputType.number,
+        keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 4,
         style: TextStyle(fontSize: 10),
