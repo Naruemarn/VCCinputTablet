@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vccinputtablet/states/input.dart';
+import 'package:vccinputtablet/states/recipelist.dart';
 import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
@@ -72,25 +73,36 @@ class _HomepageState extends State<Homepage> {
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          'VCC Input Data',
+          'VCC INPUT DATA',
           style: TextStyle(
-              color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold, shadows: <Shadow>[
+      Shadow(
+        offset: Offset(10.0, 10.0),
+        blurRadius: 3.0,
+        color: Color.fromARGB(255, 0, 0, 0),
+      ),
+      Shadow(
+        offset: Offset(10.0, 10.0),
+        blurRadius: 8.0,
+        color: Color.fromARGB(125, 0, 0, 255),
+      ),
+    ],),
         ),
         foregroundColor: Colors.white,
         backgroundColor: Colors.blueAccent,
         centerTitle: true,
         actions: [
-          IconButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (context) => InputForm()),
-                );
-              },
-              icon: const Icon(
-                Icons.keyboard_outlined,
-                color: Colors.white,
-                size: 25,
-              )),
+          // IconButton(
+          //     onPressed: () {
+          //       Navigator.of(context).push(
+          //         MaterialPageRoute(builder: (context) => InputForm()),
+          //       );
+          //     },
+          //     icon: const Icon(
+          //       Icons.keyboard_outlined,
+          //       color: Colors.white,
+          //       size: 25,
+          //     )),
           IconButton(
               onPressed: () {
                 Navigator.of(context).push(
@@ -124,15 +136,14 @@ class _HomepageState extends State<Homepage> {
               Container(
                 child: Row(
                   children: [
-                    build_selectMachine(context),
-                    build_serialnumber(),
+                    build_selectMachine(context),                    
                     build_recipelistbutton(),
                     build_recipe_name(recipe_name),
                     build_uploadtbutton(),
                   ],
                 ),
               ),
-              SizedBox(height: 15),
+              // SizedBox(height: 15),
               Divider(),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -142,7 +153,12 @@ class _HomepageState extends State<Homepage> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      build_wax_wax3d_resin(),
+                      Row(
+                        children: [
+                          build_serialnumber(),
+                          build_wax_wax3d_resin(),
+                        ],
+                      ),                      
                       build_jobid(job_id),
                       build_design_code(design_code),
                       build_alloy(alloy),
@@ -296,12 +312,16 @@ class _HomepageState extends State<Homepage> {
   Widget build_image() {
     return Container(
       margin: EdgeInsets.only(left: 6, right: 6, top: 8),
-      color: MyConstant.dark,
+      //color: MyConstant.dark,
       height: 220,
       width: 345,
       child: FittedBox(
         fit: BoxFit.fill,
         child: Card(
+          shape: RoundedRectangleBorder(
+            side: BorderSide(color: MyConstant.dark, width: 2),
+            borderRadius: BorderRadius.circular(10),
+          ),
           child: Image.asset(
             MyConstant.image1,
             width: 345.0,
@@ -361,6 +381,7 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_laserlight_onoff() {
@@ -392,7 +413,7 @@ class _HomepageState extends State<Homepage> {
                 style: TextStyle(
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black)),           
+                    color: Colors.black)),
           ],
           onPressed: (int index) {
             setState(() {
@@ -413,6 +434,7 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_normal_release_keep() {
@@ -654,7 +676,7 @@ class _HomepageState extends State<Homepage> {
   Widget build_recommend_to_fill() {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 2),
-      child: Text('[*] = Recommend to fill in blank to upload data to SV',
+      child: Text('[⭐] = Recommend to fill in blank to upload data to SV',
           textAlign: TextAlign.center,
           style: TextStyle(
               fontSize: 10,
@@ -668,7 +690,7 @@ class _HomepageState extends State<Homepage> {
   Widget buildTitle_with_backgroundColor_tempcontroller() {
     return Container(
       margin: EdgeInsets.only(left: 6, right: 6, top: 8),
-      color: Colors.pink[400],
+      color: Colors.purple[200],
       height: 20,
       child: Center(
         child: Text(
@@ -1434,10 +1456,11 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* WEIGHT :',
+          labelText: '⭐ WEIGHT :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
+          //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           suffix: Text('℃'),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
@@ -1475,10 +1498,11 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* FLASK TEMP :',
+          labelText: '⭐ FLASK TEMP :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
+          //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           suffix: Text('℃'),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
@@ -1516,10 +1540,11 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* ALLOY :',
+          labelText: '⭐ ALLOY :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
+          //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
           ),
@@ -1556,10 +1581,11 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* DESIGN CODE :',
+          labelText: '⭐ DESIGN CODE :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
+          //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
           ),
@@ -1596,10 +1622,11 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 10),
         textAlign: TextAlign.start,
         decoration: InputDecoration(
-          labelText: '* JOB ID :',
+          labelText: '⭐ JOB ID :',
           labelStyle: TextStyle(fontSize: 10),
           hintStyle: TextStyle(fontSize: 10),
           counterText: "",
+          //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
           ),
@@ -1621,7 +1648,7 @@ class _HomepageState extends State<Homepage> {
       //color: Colors.pink,
       margin: EdgeInsets.only(left: 6, top: 6),
       height: 30,
-      width: 130,
+      width: 140,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
@@ -1695,6 +1722,7 @@ class _HomepageState extends State<Homepage> {
           backgroundColor: Colors.transparent,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 10,
         ),
       ),
     );
@@ -1706,27 +1734,45 @@ class _HomepageState extends State<Homepage> {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 6),
       height: 30,
-      width: 80,
+      width: 130,
       //color: Colors.red,
-      child: ElevatedButton(
-          onPressed: () {
-            //Navigator.of(context).push(MaterialPageRoute(builder: (context) => InputForm()),
-          },
-          style: ElevatedButton.styleFrom(
-              elevation: 10,
-              backgroundColor: Colors.amberAccent,
-              shape: new RoundedRectangleBorder(
-                borderRadius: new BorderRadius.circular(30.0),
-                side: BorderSide(color: MyConstant.dark),
-              )),
-          child: Text(
-            'RecipeList',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-                fontSize: 10,
-                fontWeight: FontWeight.normal,
-                color: Colors.black),
-          )),
+      decoration: BoxDecoration(
+        boxShadow: [
+          BoxShadow(
+              color: Colors.black26, offset: Offset(0, 4), blurRadius: 5.0)
+        ],
+        gradient: RadialGradient(
+            //stops: [0.0, 1],
+            radius: 1.5,
+            colors: [
+              Colors.white,
+              Colors.amberAccent.shade100,
+              Colors.amber
+            ],
+            center: Alignment.center,
+            tileMode: TileMode.clamp),
+        color: Colors.amberAccent,
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: ElevatedButton.icon(
+        onPressed: () {
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecipeList()));
+        },
+        icon: Icon(Icons.list,
+            color: Colors.white), //icon data for elevated button
+        label: Text(
+          "Recipe List",
+          style: TextStyle(
+              color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+        ), //label text
+        style: ElevatedButton.styleFrom(
+          backgroundColor: Colors.transparent,
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          elevation: 10,
+        ),
+      ),
     );
   }
 
@@ -1734,9 +1780,9 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Container build_serialnumber() {
     return Container(
-      margin: EdgeInsets.only(top: 6),
+      margin: EdgeInsets.only(left:6, top: 6),
       height: 30,
-      width: 70,
+      width: 76,
       color: Colors.lightBlueAccent,
       child: Padding(
         padding: const EdgeInsets.all(6.0),
@@ -1756,7 +1802,7 @@ class _HomepageState extends State<Homepage> {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 6),
       height: 30,
-      width: 100,
+      width: 110,
       //color: Colors.red,
       child: DropdownButtonHideUnderline(
         child: DropdownButton2<String>(
@@ -1813,7 +1859,7 @@ class _HomepageState extends State<Homepage> {
               border: Border.all(
                 color: MyConstant.dark,
               ),
-              color: Colors.blueAccent,
+              color: Colors.lightBlueAccent,
             ),
             elevation: 2,
           ),
@@ -1830,7 +1876,7 @@ class _HomepageState extends State<Homepage> {
             width: 200,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(0),
-              color: Colors.blueAccent,
+              color: Colors.lightBlueAccent,
             ),
             offset: const Offset(-20, 0),
             scrollbarTheme: ScrollbarThemeData(

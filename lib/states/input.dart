@@ -43,7 +43,7 @@ class _InputFormState extends State<InputForm> {
         ],
       ),
       body: SafeArea(
-        child: Text('This is Input data'),
+        child: Text('This is Recipe List'),
       ),
     );
   }
