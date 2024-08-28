@@ -6,14 +6,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:vccinputtablet/models/machine_model.dart';
 import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
-import 'package:vccinputtablet/states/input.dart';
 import 'package:vccinputtablet/states/recipelist.dart';
 import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 import 'package:vccinputtablet/utility/sqlite_helper.dart';
-import 'package:vccinputtablet/widgets/show_image.dart';
-import 'package:flutter_switch/flutter_switch.dart';
+
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -23,8 +21,8 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
-  final formkey = GlobalKey<FormState>();
-
+  // Button
+  //bool status_toggle = false;
   var isSelected1 = [true, false, false]; // Wax , Wax (3D), Resin
   var isSelected2 = [true, false]; // Manual , Auto
   var isSelected3 = [true, false, false]; // No, Argon, Nitrogen
@@ -32,8 +30,8 @@ class _HomepageState extends State<Homepage> {
   var isSelected5 = [true, false, false]; // Normal , Release, Keep
   var isSelected6 = [true, false]; // On , Off
 
-  bool status_toggle = false;
-
+  // Textbox
+  final formkey = GlobalKey<FormState>();
   TextEditingController recipe_name = TextEditingController();
   TextEditingController job_id = TextEditingController();
   TextEditingController design_code = TextEditingController();
@@ -52,22 +50,18 @@ class _HomepageState extends State<Homepage> {
 
   TextEditingController origin_point = TextEditingController();
   TextEditingController arm_origin_speed = TextEditingController();
-
   TextEditingController zero_point_adjust = TextEditingController();
-
   TextEditingController emissivity = TextEditingController();
-
   TextEditingController casting_keep_time = TextEditingController();
   TextEditingController casting_range_degree = TextEditingController();
   TextEditingController p_ = TextEditingController();
   TextEditingController i_ = TextEditingController();
   TextEditingController d_ = TextEditingController();
 
+  // Dropdown
   List<String> listMachineName = [];
   List<String> listSerial = [];
   String? selectedValue;
-
-  String? serial_number = 'S/N:';
 
   // Database
   MachineModel? machineModel;
@@ -78,6 +72,45 @@ class _HomepageState extends State<Homepage> {
   String? username;
   String? password;
   String? databasename;
+
+  // Variable
+  String? _Timestamp = '2000-01-01 "00:00:00';
+  String? _machineName = 'VCCxx';
+  String? _serialNumber = 'S/N:';
+  // String? _recipeName;
+
+  // String? _jobId;
+  // String? _designCode;
+  // String? _alloy;
+  // String? _flaskTemp;
+  // String? _weight;
+
+  String? _wax = '0';
+  String? _wax3D = '0';
+  String? _resin = '0';
+
+  String? _mode1 = '0';
+  // String? _tempSettingValue;
+  // String? _inertGas;
+  // String? _airWash;
+  // String? _sCurve;
+  // String? _acceleration;
+  // String? _rotation;
+  // String? _pressurePV;
+  // String? _rotationTime;
+  // String? _exhTiming;
+
+  String? _mode2 = '0';
+  // String? _originPoint;
+  // String? _armOriginSpeed;
+  // String? _zeroPointAdjust;
+  String? _laserLight = '0';
+  // String? _emissivity;
+  // String? _castingKeepTime;
+  // String? _castingRangDegree;
+  // String? _p;
+  // String? _i;
+  // String? _d;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<Null> process_count_row() async {
@@ -138,22 +171,27 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Future<void> cannot_access_server_popup() async {
+  Future<void> cannot_access_server_popup() async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: ListTile(
           //leading: ShowImage(path: MyConstant.confirm),
-          leading: Icon(Icons.error_outline, color: Colors.red,size: 50,),
-          title: Text('Can not access server.',
+          leading: Icon(
+            Icons.error_outline,
+            color: Colors.red,
+            size: 50,
+          ),
+          title: Text(
+            'Cannot access server.\r\nPlease check the internet.',
             style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.normal, color: Colors.blue),
+                fontSize: 20, fontWeight: FontWeight.normal, color: Colors.red),
           ),
           //subtitle: Text('Are you sure?', style: TextStyle(color: Colors.teal),),
         ),
         actions: [
           TextButton(
-            onPressed: () {             
+            onPressed: () {
               Navigator.pop(context);
             },
             child: Text(
@@ -163,11 +201,12 @@ Future<void> cannot_access_server_popup() async {
                   fontWeight: FontWeight.bold,
                   color: Colors.blue),
             ),
-          ),          
+          ),
         ],
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @override
@@ -393,7 +432,7 @@ Future<void> cannot_access_server_popup() async {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Container build_toggle_switch_laser_light() {
+  /*Container build_toggle_switch_laser_light() {
     return Container(
       margin: EdgeInsets.only(left: 6, right: 6, top: 1),
       height: 30,
@@ -421,7 +460,7 @@ Future<void> cannot_access_server_popup() async {
         },
       ),
     );
-  }
+  }*/
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -1823,7 +1862,12 @@ Future<void> cannot_access_server_popup() async {
       ),
       child: ElevatedButton.icon(
         onPressed: () {
-          print("Upload");
+          if (formkey.currentState!.validate()) {
+            print("Upload");
+
+
+
+          }
         },
         icon: Icon(Icons.cloud_upload_rounded,
             color: Colors.white), //icon data for elevated button
@@ -1898,7 +1942,7 @@ Future<void> cannot_access_server_popup() async {
       child: Padding(
         padding: const EdgeInsets.all(6.0),
         child: Text(
-          serial_number!,
+          _serialNumber!,
           textAlign: TextAlign.start,
           style: TextStyle(
               color: Colors.black, fontSize: 10, fontWeight: FontWeight.normal),
@@ -1960,7 +2004,7 @@ Future<void> cannot_access_server_popup() async {
             setState(() {
               selectedValue = value;
               int selectedIndex = listMachineName.indexOf(selectedValue!);
-              serial_number = 'S/N:' + listSerial[selectedIndex];
+              _serialNumber = 'S/N:' + listSerial[selectedIndex];
               //print('Select Machine Index: ${listMachineName.indexOf(selectedValue!)}');
             });
           },
