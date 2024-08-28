@@ -1,9 +1,11 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:intl/intl.dart';
 import 'package:vccinputtablet/models/machine_model.dart';
 import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
 import 'package:vccinputtablet/states/recipelist.dart';
@@ -11,7 +13,6 @@ import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 import 'package:vccinputtablet/utility/sqlite_helper.dart';
-
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -89,10 +90,10 @@ class _HomepageState extends State<Homepage> {
   String? _wax3D = '0';
   String? _resin = '0';
 
-  String? _mode1 = '0';
+  String? _mode1 = 'Manual';
   // String? _tempSettingValue;
-  // String? _inertGas;
-  // String? _airWash;
+  String? _inertGas = '0';
+  String? _airWash = '0';
   // String? _sCurve;
   // String? _acceleration;
   // String? _rotation;
@@ -100,11 +101,11 @@ class _HomepageState extends State<Homepage> {
   // String? _rotationTime;
   // String? _exhTiming;
 
-  String? _mode2 = '0';
+  String? _mode2 = 'Normal';
   // String? _originPoint;
   // String? _armOriginSpeed;
   // String? _zeroPointAdjust;
-  String? _laserLight = '0';
+  String? _laserLight = 'On';
   // String? _emissivity;
   // String? _castingKeepTime;
   // String? _castingRangDegree;
@@ -164,14 +165,14 @@ class _HomepageState extends State<Homepage> {
           }
         });
       } on DioException catch (e) {
-        cannot_access_server_popup();
+        popup_error('Cannot access server.\r\nPlease check the internet.');
       }
     });
   }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Future<void> cannot_access_server_popup() async {
+  Future<void> popup_error(String msg) async {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -183,7 +184,7 @@ class _HomepageState extends State<Homepage> {
             size: 50,
           ),
           title: Text(
-            'Cannot access server.\r\nPlease check the internet.',
+            msg,
             style: TextStyle(
                 fontSize: 20, fontWeight: FontWeight.normal, color: Colors.red),
           ),
@@ -209,6 +210,65 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<void> popup_information(String msg) async {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: ListTile(
+          //leading: ShowImage(path: MyConstant.confirm),
+          leading: Icon(
+            Icons.check,
+            color: Colors.green,
+            size: 50,
+          ),
+          title: Text(
+            msg,
+            style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.normal,
+                color: Colors.blue),
+          ),
+          //subtitle: Text('Are you sure?', style: TextStyle(color: Colors.teal),),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            child: Text(
+              'OK',
+              style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.blue),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> processInsertOrUpdateMySQL() async {
+    final DateTime now = DateTime.now();
+    _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+    String sn = _serialNumber!.substring(4);
+    try {
+      String apiInsertData =
+          'http://$server/vcc/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$sn&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timeing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
+
+      await Dio().get(apiInsertData).then((value) {
+        popup_information('Uploading data...\r\nSuccess');
+      });
+    } on DioException catch (e) {
+      popup_error('Cannot access server.\r\nPlease check the internet.');
+    }
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
   @override
   void initState() {
     // TODO: implement initState
@@ -222,7 +282,7 @@ class _HomepageState extends State<Homepage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false,
+      //resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
           'VCC INPUT DATA',
@@ -285,8 +345,8 @@ class _HomepageState extends State<Homepage> {
         behavior: HitTestBehavior.opaque,
         child: Form(
           key: formkey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: ListView(
+            //crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 child: Row(
@@ -299,7 +359,7 @@ class _HomepageState extends State<Homepage> {
                 ),
               ),
               // SizedBox(height: 15),
-              Divider(),
+              //Divider(),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 //mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -330,26 +390,26 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ],
               ),
-              SizedBox(height: 15),
-              Divider(),
+              // SizedBox(height: 15),
+              // Divider(),
               Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   Column(
                     children: [
-                      buildTitle('Mode1', 6, 0),
+                      buildTitle('Mode1', 6, 20),
                       build_manual_auto_button(),
                     ],
                   ),
                   Column(
                     children: [
-                      buildTitle('Inert-Gas', 50, 0),
+                      buildTitle('Inert-Gas', 50, 20),
                       build_InertGas(),
                     ],
                   ),
                   Column(
                     children: [
-                      buildTitle('Air-Wash', 6, 0),
+                      buildTitle('Air-Wash', 6, 20),
                       build_airwash(),
                     ],
                   ),
@@ -373,13 +433,13 @@ class _HomepageState extends State<Homepage> {
                   build_exh_timing(exh_timeing),
                 ],
               ),
-              SizedBox(height: 15),
-              Divider(),
+              // SizedBox(height: 15),
+              // Divider(),
               Row(
                 children: [
                   Column(
                     children: [
-                      buildTitle('Mode2', 6, 0),
+                      buildTitle('Mode2', 6, 20),
                       build_normal_release_keep(),
                     ],
                   ),
@@ -387,9 +447,9 @@ class _HomepageState extends State<Homepage> {
               ),
               Row(
                 children: [
-                  buildTitle_with_backgroundColor('GENERAL SETTING', 6, 8,
+                  buildTitle_with_backgroundColor('GENERAL SETTING', 6, 0, 8,
                       Color.fromARGB(255, 23, 207, 170), 252),
-                  buildTitle_with_backgroundColor('PRESSURE SENSOR', 12, 8,
+                  buildTitle_with_backgroundColor('PRESSURE SENSOR', 12, 0, 8,
                       Color.fromARGB(95, 36, 106, 236), 120),
                 ],
               ),
@@ -400,8 +460,8 @@ class _HomepageState extends State<Homepage> {
                   build_zero_point_adjust(zero_point_adjust),
                 ],
               ),
-              buildTitle_with_backgroundColor('THERMO SENSOR', 6, 8,
-                  Color.fromARGB(255, 10, 124, 232), 252),
+              buildTitle_with_backgroundColor('THERMO SENSOR', 6, 6, 8,
+                  Color.fromARGB(255, 10, 124, 232), 250),
               Row(
                 children: [
                   buildTitle('Laser light:', 6, 0),
@@ -469,7 +529,7 @@ class _HomepageState extends State<Homepage> {
       margin: EdgeInsets.only(left: 6, right: 6, top: 8),
       //color: MyConstant.dark,
       height: 220,
-      width: 345,
+      width: 340,
       child: FittedBox(
         fit: BoxFit.fill,
         child: Card(
@@ -509,19 +569,19 @@ class _HomepageState extends State<Homepage> {
             Text('Wax',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Wax (3D)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Resin',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -529,6 +589,26 @@ class _HomepageState extends State<Homepage> {
             setState(() {
               isSelected1[index] = !isSelected1[index];
               print("Wax Wax3D Resin : ${isSelected1}");
+
+              if (isSelected1[0]) {
+                _wax = '1';
+              } else {
+                _wax = '0';
+              }
+
+              if (isSelected1[1]) {
+                _wax3D = '1';
+              } else {
+                _wax3D = '0';
+              }
+
+              if (isSelected1[2]) {
+                _resin = '1';
+              } else {
+                _resin = '0';
+              }
+
+              print('Wax Wax3D Resin ===========> $_wax $_wax3D $_resin');
             });
           },
           isSelected: isSelected1,
@@ -541,7 +621,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_laserlight_onoff() {
     return Container(
-      margin: EdgeInsets.only(left: 6, right: 2),
+      margin: EdgeInsets.only(left: 6, right: 2, top: 5),
       height: 30,
       //color: Colors.pink,
       child: FittedBox(
@@ -558,13 +638,13 @@ class _HomepageState extends State<Homepage> {
             Text('On',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Off',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -579,6 +659,12 @@ class _HomepageState extends State<Homepage> {
                   isSelected6[buttonIndex] = false;
                 }
                 print("Laser light : ${isSelected6}");
+
+                if (isSelected6[0]) {
+                  _laserLight = 'On';
+                } else {
+                  _laserLight = 'Off';
+                }
               }
             });
           },
@@ -611,19 +697,19 @@ class _HomepageState extends State<Homepage> {
             Text('Normal',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Release',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Keep',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -638,6 +724,18 @@ class _HomepageState extends State<Homepage> {
                   isSelected5[buttonIndex] = false;
                 }
                 print("Normal Release Keep : ${isSelected5}");
+
+                if (isSelected5[0]) {
+                  _mode2 = 'Normal';
+                }
+
+                if (isSelected5[1]) {
+                  _mode2 = 'Release';
+                }
+
+                if (isSelected5[2]) {
+                  _mode2 = 'Keep';
+                }
               }
             });
           },
@@ -670,25 +768,25 @@ class _HomepageState extends State<Homepage> {
             Text('No',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('1times',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('2times',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('3times',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -703,6 +801,22 @@ class _HomepageState extends State<Homepage> {
                   isSelected4[buttonIndex] = false;
                 }
                 print("Air-Wash : ${isSelected4}");
+
+                if (isSelected4[0]) {
+                  _airWash = '0';
+                }
+
+                if (isSelected4[1]) {
+                  _airWash = '1';
+                }
+
+                if (isSelected4[2]) {
+                  _airWash = '2';
+                }
+
+                if (isSelected4[3]) {
+                  _airWash = '3';
+                }
               }
             });
           },
@@ -735,19 +849,19 @@ class _HomepageState extends State<Homepage> {
             Text('No',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Argon',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Nitrogen',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -762,6 +876,18 @@ class _HomepageState extends State<Homepage> {
                   isSelected3[buttonIndex] = false;
                 }
                 print("Inert-Gas : ${isSelected3}");
+
+                if (isSelected3[0]) {
+                  _inertGas = 'No';
+                }
+
+                if (isSelected3[1]) {
+                  _inertGas = 'Argon';
+                }
+
+                if (isSelected3[2]) {
+                  _inertGas = 'Nitrogen';
+                }
               }
             });
           },
@@ -794,13 +920,13 @@ class _HomepageState extends State<Homepage> {
             Text('Manual',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Auto',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 10,
+                    fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -815,6 +941,11 @@ class _HomepageState extends State<Homepage> {
                   isSelected2[buttonIndex] = false;
                 }
                 print("Manaul Auto : ${isSelected2}");
+                if (isSelected2[0]) {
+                  _mode1 = 'Manual';
+                } else {
+                  _mode1 = 'Auto';
+                }
               }
             });
           },
@@ -859,9 +990,9 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget buildTitle_with_backgroundColor(
-      String msg, double left_, double top_, Color x, double w) {
+      String msg, double left_, double right_, double top_, Color x, double w) {
     return Container(
-      margin: EdgeInsets.only(left: left_, top: top_),
+      margin: EdgeInsets.only(left: left_, right: right_, top: top_),
       height: 20,
       width: w,
       color: x,
@@ -895,13 +1026,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_casting_keep_time(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 90,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Casting Keep Time';
+            return '';
           } else {
             return null;
           }
@@ -909,12 +1040,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Casting Keep Time :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Casting Keep Time',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('sec'),
           border: OutlineInputBorder(
@@ -926,6 +1058,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -936,13 +1069,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_casting_range_degree(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 90,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Casting Range Degree';
+            return '';
           } else {
             return null;
           }
@@ -950,12 +1083,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Casting Range Degree :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Casting Range Degree',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('℃'),
           border: OutlineInputBorder(
@@ -967,6 +1101,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -977,13 +1112,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_p(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 90,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill P';
+            return '';
           } else {
             return null;
           }
@@ -991,12 +1126,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'P :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'P',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //suffix: Text('rpm'),
           border: OutlineInputBorder(
@@ -1008,6 +1144,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1018,13 +1155,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_i(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 90,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill I';
+            return '';
           } else {
             return null;
           }
@@ -1032,12 +1169,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'I :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'I',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //suffix: Text('rpm'),
           border: OutlineInputBorder(
@@ -1049,6 +1187,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1059,13 +1198,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_d(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 90,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill D';
+            return '';
           } else {
             return null;
           }
@@ -1073,12 +1212,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'D :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'D',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //suffix: Text('rpm'),
           border: OutlineInputBorder(
@@ -1090,6 +1230,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1100,13 +1241,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_emissivity(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 12, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 12, right: 6, top: 5),
       height: 30,
       width: 120,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Emissivity';
+            return '';
           } else {
             return null;
           }
@@ -1114,12 +1255,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Emissivity :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Emissivity',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('rpm'),
           border: OutlineInputBorder(
@@ -1131,6 +1273,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1141,13 +1284,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_zero_point_adjust(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 120,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Zero Point Adjust';
+            return '';
           } else {
             return null;
           }
@@ -1155,12 +1298,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Zero Point Adjust :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Zero Point Adjust',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('kPa'),
           border: OutlineInputBorder(
@@ -1172,6 +1316,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1182,13 +1327,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_arm_origin_speed(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 120,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill ARM Origin Speed';
+            return '';
           } else {
             return null;
           }
@@ -1196,12 +1341,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'ARM Origin Speed :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'ARM Origin Speed',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('rpm'),
           border: OutlineInputBorder(
@@ -1213,6 +1359,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1223,13 +1370,13 @@ class _HomepageState extends State<Homepage> {
   Widget build_origin_point(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, right: 6, top: 1),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 5),
       height: 30,
       width: 120,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Origin Point';
+            return '';
           } else {
             return null;
           }
@@ -1237,12 +1384,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Origin Point :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Origin Point',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //suffix: Text('sec'),
           border: OutlineInputBorder(
@@ -1254,6 +1402,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1270,7 +1419,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill EXH-Timing';
+            return '';
           } else {
             return null;
           }
@@ -1278,12 +1427,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'EXH-Timing :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'EXH-Timing',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('sec'),
           border: OutlineInputBorder(
@@ -1295,6 +1445,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1311,7 +1462,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Rotation Time';
+            return '';
           } else {
             return null;
           }
@@ -1319,12 +1470,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Rotation Time :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Rotation Time',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('sec'),
           border: OutlineInputBorder(
@@ -1336,6 +1488,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1352,7 +1505,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Pressure PV';
+            return '';
           } else {
             return null;
           }
@@ -1360,12 +1513,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Pressure PV :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Pressure PV',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('kPa'),
           border: OutlineInputBorder(
@@ -1377,6 +1531,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1393,7 +1548,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Rotation';
+            return '';
           } else {
             return null;
           }
@@ -1401,12 +1556,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Rotation :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Rotation',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('rpm'),
           border: OutlineInputBorder(
@@ -1418,6 +1574,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1434,7 +1591,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Acceleration';
+            return '';
           } else {
             return null;
           }
@@ -1442,12 +1599,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Accelerarion :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Accelerarion',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('sec'),
           border: OutlineInputBorder(
@@ -1459,6 +1617,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1475,7 +1634,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill S-Curve';
+            return '';
           } else {
             return null;
           }
@@ -1483,12 +1642,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'S-Curve :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'S-Curve',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //suffix: Text('%'),
           border: OutlineInputBorder(
@@ -1500,6 +1660,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1516,7 +1677,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Max Heat Power';
+            return '';
           } else {
             return null;
           }
@@ -1524,12 +1685,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Max Heat Power :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'Max Heat Power',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('%'),
           border: OutlineInputBorder(
@@ -1541,6 +1703,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1557,7 +1720,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill TEMP. Setting Value';
+            return '';
           } else {
             return null;
           }
@@ -1565,12 +1728,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         //maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'TEMP. Seting Value :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: 'TEMP. Seting Value',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           suffix: Text('℃'),
           border: OutlineInputBorder(
@@ -1582,6 +1746,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1598,7 +1763,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill WEIGHT';
+            return '';
           } else {
             return null;
           }
@@ -1606,12 +1771,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 3,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: '⭐ WEIGHT :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: '⭐ WEIGHT',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           suffix: Text('℃'),
@@ -1624,6 +1790,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1640,7 +1807,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill FLASK TEMP';
+            return '';
           } else {
             return null;
           }
@@ -1648,12 +1815,13 @@ class _HomepageState extends State<Homepage> {
         keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 4,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: '⭐ FLASK TEMP :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: '⭐ FLASK TEMP',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           suffix: Text('℃'),
@@ -1666,6 +1834,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1682,7 +1851,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill ALLOY';
+            return '';
           } else {
             return null;
           }
@@ -1690,12 +1859,13 @@ class _HomepageState extends State<Homepage> {
         //keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 15,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: '⭐ ALLOY :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: '⭐ ALLOY',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           border: OutlineInputBorder(
@@ -1707,6 +1877,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1723,7 +1894,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill DESIGN CODE';
+            return '';
           } else {
             return null;
           }
@@ -1731,12 +1902,13 @@ class _HomepageState extends State<Homepage> {
         //keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 15,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: '⭐ DESIGN CODE :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelText: '⭐ DESIGN CODE',
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
           border: OutlineInputBorder(
@@ -1748,6 +1920,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1764,7 +1937,7 @@ class _HomepageState extends State<Homepage> {
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill JOB ID';
+            return '';
           } else {
             return null;
           }
@@ -1772,24 +1945,25 @@ class _HomepageState extends State<Homepage> {
         //keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 15,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: '⭐ JOB ID :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
-          counterText: "",
-          //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
-          border: OutlineInputBorder(
-            borderSide: BorderSide(width: 1, color: MyConstant.dark),
-          ),
-          enabledBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1, color: MyConstant.dark)),
-          focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1, color: MyConstant.light)),
-          errorBorder: OutlineInputBorder(
-              borderSide: BorderSide(width: 1, color: Colors.red)),
-        ),
+            contentPadding: EdgeInsets.all(2),
+            labelText: '⭐ JOB ID',
+            labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            counterText: "",
+            //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
+            border: OutlineInputBorder(
+              borderSide: BorderSide(width: 1, color: MyConstant.dark),
+            ),
+            enabledBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 1, color: MyConstant.dark)),
+            focusedBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 1, color: MyConstant.light)),
+            errorBorder: OutlineInputBorder(
+                borderSide: BorderSide(width: 1, color: Colors.red)),
+            errorStyle: TextStyle(height: 0)),
       ),
     );
   }
@@ -1801,11 +1975,11 @@ class _HomepageState extends State<Homepage> {
       //color: Colors.pink,
       margin: EdgeInsets.only(left: 6, top: 6),
       height: 30,
-      width: 140,
+      width: 210,
       child: TextFormField(
         validator: (value) {
           if (value!.isEmpty) {
-            return 'Please Fill Recipe name';
+            return '';
           } else {
             return null;
           }
@@ -1813,12 +1987,13 @@ class _HomepageState extends State<Homepage> {
         //keyboardType: TextInputType.number,
         controller: inputbox,
         maxLength: 17,
-        style: TextStyle(fontSize: 10),
-        textAlign: TextAlign.start,
+        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+        textAlign: TextAlign.center,
         decoration: InputDecoration(
           labelText: 'Recipe name :',
-          labelStyle: TextStyle(fontSize: 10),
-          hintStyle: TextStyle(fontSize: 10),
+          contentPadding: EdgeInsets.all(2),
+          labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+          hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
@@ -1829,6 +2004,7 @@ class _HomepageState extends State<Homepage> {
               borderSide: BorderSide(width: 1, color: MyConstant.light)),
           errorBorder: OutlineInputBorder(
               borderSide: BorderSide(width: 1, color: Colors.red)),
+          errorStyle: TextStyle(height: 0),
         ),
       ),
     );
@@ -1863,10 +2039,15 @@ class _HomepageState extends State<Homepage> {
       child: ElevatedButton.icon(
         onPressed: () {
           if (formkey.currentState!.validate()) {
-            print("Upload");
-
-
-
+            if ((_machineName != 'VCCxx') && (_serialNumber != 'S/N:')) {
+              processInsertOrUpdateMySQL();
+              print("Upload");
+            } else {
+              popup_error('Please select the machine.');
+            }
+          } else {
+            popup_error(
+                'Please fill out the information correctly and completely.');
           }
         },
         icon: Icon(Icons.cloud_upload_rounded,
@@ -1874,7 +2055,7 @@ class _HomepageState extends State<Homepage> {
         label: Text(
           "UPLOAD",
           style: TextStyle(
-              color: Colors.black, fontSize: 12, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 13.5, fontWeight: FontWeight.bold),
         ), //label text
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -1892,7 +2073,7 @@ class _HomepageState extends State<Homepage> {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 6),
       height: 30,
-      width: 130,
+      width: 60,
       //color: Colors.red,
       decoration: BoxDecoration(
         boxShadow: [
@@ -1908,25 +2089,22 @@ class _HomepageState extends State<Homepage> {
         color: Colors.amberAccent,
         borderRadius: BorderRadius.circular(10),
       ),
-      child: ElevatedButton.icon(
-        onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => RecipeList()));
-        },
-        icon: Icon(Icons.list,
-            color: Colors.white), //icon data for elevated button
-        label: Text(
-          "Recipe List",
-          style: TextStyle(
-              color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
-          textAlign: TextAlign.center,
-        ), //label text
+      child: ElevatedButton(
+        child: Text("Recipe List",
+            style: TextStyle(
+                color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
           shape:
               RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
           elevation: 10,
+          padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1),
         ),
+        onPressed: () {
+          Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => RecipeList()));
+        },
       ),
     );
   }
@@ -1943,7 +2121,7 @@ class _HomepageState extends State<Homepage> {
         padding: const EdgeInsets.all(6.0),
         child: Text(
           _serialNumber!,
-          textAlign: TextAlign.start,
+          textAlign: TextAlign.center,
           style: TextStyle(
               color: Colors.black, fontSize: 10, fontWeight: FontWeight.normal),
         ),
@@ -2002,9 +2180,14 @@ class _HomepageState extends State<Homepage> {
           value: selectedValue,
           onChanged: (value) {
             setState(() {
+              process_count_row();
+
               selectedValue = value;
+              _machineName = selectedValue;
+
               int selectedIndex = listMachineName.indexOf(selectedValue!);
               _serialNumber = 'S/N:' + listSerial[selectedIndex];
+
               //print('Select Machine Index: ${listMachineName.indexOf(selectedValue!)}');
             });
           },
