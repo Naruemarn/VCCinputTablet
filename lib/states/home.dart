@@ -1990,7 +1990,7 @@ class _HomepageState extends State<Homepage> {
         style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
         textAlign: TextAlign.center,
         decoration: InputDecoration(
-          labelText: 'Recipe name :',
+          labelText: 'Recipe name',
           contentPadding: EdgeInsets.all(2),
           labelStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
@@ -2055,7 +2055,7 @@ class _HomepageState extends State<Homepage> {
         label: Text(
           "UPLOAD",
           style: TextStyle(
-              color: Colors.black, fontSize: 13.5, fontWeight: FontWeight.bold),
+              color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.bold),
         ), //label text
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,

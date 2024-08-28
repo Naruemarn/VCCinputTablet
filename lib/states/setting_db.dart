@@ -82,7 +82,7 @@ class _SettingDBState extends State<SettingDB> {
         ),
         centerTitle: true,
         foregroundColor: Colors.white,
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blue,
         elevation: 25,
         leading: IconButton(
           onPressed: () {
@@ -364,7 +364,7 @@ class _SettingDBState extends State<SettingDB> {
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
             ),
             style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                backgroundColor: Colors.blue, foregroundColor: Colors.white),
           ),
         ),
       ],
@@ -392,7 +392,7 @@ class _SettingDBState extends State<SettingDB> {
               style: TextStyle(fontSize: 15, fontWeight: FontWeight.normal),
             ),
             style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.teal, foregroundColor: Colors.white),
+                backgroundColor: Colors.blue, foregroundColor: Colors.white),
           ),
         ),
       ],
