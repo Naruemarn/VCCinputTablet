@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:vccinputtablet/models/machine_model.dart';
 import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
+import 'package:vccinputtablet/models/sqlite_model_vcc_castlog.dart';
 import 'package:vccinputtablet/states/recipelist.dart';
 import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
@@ -47,7 +48,7 @@ class _HomepageState extends State<Homepage> {
   TextEditingController rotation = TextEditingController();
   TextEditingController pressure_pv = TextEditingController();
   TextEditingController rotation_time = TextEditingController();
-  TextEditingController exh_timeing = TextEditingController();
+  TextEditingController exh_timing = TextEditingController();
 
   TextEditingController origin_point = TextEditingController();
   TextEditingController arm_origin_speed = TextEditingController();
@@ -172,6 +173,17 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> processReadSQLite_VccCastLog() async {
+    await SQLiteHeltper().readsqlite_vcc_castlog().then((value) {
+      print('value on SQLite VCC CastLog ===> $value');
+      setState(() {
+        load = false;
+      });
+    });
+  }
+
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<void> popup_error(String msg) async {
     showDialog(
       context: context,
@@ -257,7 +269,7 @@ class _HomepageState extends State<Homepage> {
     String sn = _serialNumber!.substring(4);
     try {
       String apiInsertData =
-          'http://$server/vcc/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$sn&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timeing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
+          'http://$server/vcc/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$sn&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
 
       await Dio().get(apiInsertData).then((value) {
         popup_information('Uploading data...\r\nSuccess');
@@ -266,9 +278,25 @@ class _HomepageState extends State<Homepage> {
       popup_error('Cannot access server.\r\nPlease check the internet.');
     }
   }
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> processInsertSQLite_VccCastLog() async {
+    // Insert
+    final DateTime now = DateTime.now();
+    _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+     String sn = _serialNumber!.substring(4);
+
+    SQLiteModelVccCastLog data = SQLiteModelVccCastLog(timestamp: _Timestamp!, machine_name: _machineName!, serial: sn, recipe_name: recipe_name.text, job_id: job_id.text, design_code: design_code.text, alloy: alloy.text, flask_temp: flask_temp.text, weight: weight_.text, wax: _wax!, wax_3d: _wax3D!, resin: _resin!, mode1: _mode1!, temp_setting_value: temp_setting_value.text, inert_gas: _inertGas!, airwash: _airWash!, s_curve: s_curve.text, acceleration: acceleration.text, rotation: rotation.text, pressure_pv: pressure_pv.text, rotation_time: rotation_time.text, exh_timing: exh_timing.text, mode2: _mode2!, origin_point: origin_point.text, arm_origin_speed: arm_origin_speed.text, zero_point_adjust: zero_point_adjust.text, laser_light: _laserLight!, emissivity: emissivity.text, casting_keep_time: casting_keep_time.text, casting_range_degree: casting_range_degree.text, p: p_.text, i: i_.text, d: d_.text);
+
+    await SQLiteHeltper().insertValueToSQLite_VccCastLog(data).then((value) {
+      //Navigator.pop(context);
+    });
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   @override
   void initState() {
     // TODO: implement initState
@@ -285,7 +313,7 @@ class _HomepageState extends State<Homepage> {
       //resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: Text(
-          'VCC INPUT DATA',
+          'VCC CASTLOG',
           style: TextStyle(
             color: Colors.white,
             fontSize: 25,
@@ -430,7 +458,7 @@ class _HomepageState extends State<Homepage> {
                   build_rotation(rotation),
                   build_pressure_pv(pressure_pv),
                   build_rotation_time(rotation_time),
-                  build_exh_timing(exh_timeing),
+                  build_exh_timing(exh_timing),
                 ],
               ),
               // SizedBox(height: 15),
@@ -2040,7 +2068,7 @@ class _HomepageState extends State<Homepage> {
         onPressed: () {
           if (formkey.currentState!.validate()) {
             if ((_machineName != 'VCCxx') && (_serialNumber != 'S/N:')) {
-              processInsertOrUpdateMySQL();
+              processInsertOrUpdateMySQL().then((value) => processInsertSQLite_VccCastLog());
               print("Upload");
             } else {
               popup_error('Please select the machine.');
@@ -2102,8 +2130,8 @@ class _HomepageState extends State<Homepage> {
           padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1),
         ),
         onPressed: () {
-          Navigator.of(context)
-              .push(MaterialPageRoute(builder: (context) => RecipeList()));
+          processReadSQLite_VccCastLog();
+          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecipeList()));
         },
       ),
     );
