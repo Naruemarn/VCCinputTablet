@@ -376,9 +376,11 @@ class _HomepageState extends State<Homepage> {
           child: ListView(
             //crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SizedBox(height: 10),
               Container(
                 child: Row(
                   children: [
+                    
                     build_selectMachine(context),
                     build_recipelistbutton(),
                     build_recipe_name(recipe_name),
@@ -418,7 +420,7 @@ class _HomepageState extends State<Homepage> {
                   ),
                 ],
               ),
-              // SizedBox(height: 15),
+              SizedBox(height: 10),
               // Divider(),
               Row(
                 //mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -431,13 +433,13 @@ class _HomepageState extends State<Homepage> {
                   ),
                   Column(
                     children: [
-                      buildTitle('Inert-Gas', 50, 20),
+                      buildTitle('Inert-Gas', 10, 20),
                       build_InertGas(),
                     ],
                   ),
                   Column(
                     children: [
-                      buildTitle('Air-Wash', 6, 20),
+                      buildTitle('Air-Wash', 10, 20),
                       build_airwash(),
                     ],
                   ),
@@ -488,11 +490,11 @@ class _HomepageState extends State<Homepage> {
                   build_zero_point_adjust(zero_point_adjust),
                 ],
               ),
-              buildTitle_with_backgroundColor('THERMO SENSOR', 6, 6, 8,
-                  Color.fromARGB(255, 10, 124, 232), 250),
+              buildTitle_with_backgroundColor('THERMO SENSOR', 6, 316, 8,
+                  Color.fromARGB(255, 73, 158, 238), 252),
               Row(
                 children: [
-                  buildTitle('Laser light:', 6, 0),
+                  //buildTitle('Laser light:', 6, 0),
                   //build_toggle_switch_laser_light(),
                   build_laserlight_onoff(),
                   build_emissivity(emissivity),
@@ -663,13 +665,13 @@ class _HomepageState extends State<Homepage> {
           splashColor: Colors.blue,
           borderRadius: BorderRadius.circular(10),
           children: [
-            Text('On',
+            Text('Laser light\r\nOn',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
-            Text('Off',
+            Text('Laser light\r\nOff',
                 textAlign: TextAlign.center,
                 style: TextStyle(
                     fontSize: 12,
@@ -778,7 +780,7 @@ class _HomepageState extends State<Homepage> {
   Widget build_airwash() {
     return Container(
       margin: EdgeInsets.only(
-        left: 6,
+        left: 10,
       ),
       height: 30,
       //color: Colors.pink,
@@ -859,7 +861,7 @@ class _HomepageState extends State<Homepage> {
   Widget build_InertGas() {
     return Container(
       margin: EdgeInsets.only(
-        left: 50,
+        left: 10,
       ),
       height: 30,
       //color: Colors.pink,
@@ -1008,7 +1010,7 @@ class _HomepageState extends State<Homepage> {
         child: Text(
           'TEMP.CONTROLLER',
           style: TextStyle(
-              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+              fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
           textAlign: TextAlign.center,
         ),
       ),
@@ -1028,7 +1030,7 @@ class _HomepageState extends State<Homepage> {
         child: Text(
           msg,
           style: TextStyle(
-              fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+              fontSize: 12, fontWeight: FontWeight.bold, color: Colors.black),
           textAlign: TextAlign.center,
         ),
       ),
@@ -2083,7 +2085,7 @@ class _HomepageState extends State<Homepage> {
         label: Text(
           "UPLOAD",
           style: TextStyle(
-              color: Colors.white, fontSize: 13.5, fontWeight: FontWeight.bold),
+              color: Colors.black, fontSize: 13.5, fontWeight: FontWeight.bold),
         ), //label text
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
