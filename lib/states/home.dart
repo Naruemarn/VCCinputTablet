@@ -14,6 +14,7 @@ import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 import 'package:vccinputtablet/utility/sqlite_helper.dart';
+import 'package:vccinputtablet/widgets/show_progress.dart';
 
 class Homepage extends StatefulWidget {
   const Homepage({super.key});
@@ -42,7 +43,7 @@ class _HomepageState extends State<Homepage> {
   TextEditingController weight_ = TextEditingController();
 
   TextEditingController temp_setting_value = TextEditingController();
-  TextEditingController max_heatpower = TextEditingController();
+  TextEditingController max_heat_power = TextEditingController();
   TextEditingController s_curve = TextEditingController();
   TextEditingController acceleration = TextEditingController();
   TextEditingController rotation = TextEditingController();
@@ -115,19 +116,17 @@ class _HomepageState extends State<Homepage> {
   // String? _d;
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Future<Null> process_count_row() async {
-    await SQLiteHeltper().getCount().then((value) async {
+  Future<Null> process_count_row_ServerConfig() async {
+    await SQLiteHeltper().getCount(SQLiteHeltper().tbl_serverSetting).then((value) async {
       //print('Count Row: $value');
       if (value! > 0) {
         processReadSQLite();
       } else {
-        await Navigator.of(context)
-            .push(MaterialPageRoute(builder: (context) => SettingDB()))
-            .then((value) => processReadSQLite());
+        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingDB())).then((value) => processReadSQLite());
       }
 
       setState(() {
-        cnt_server_config = value!;
+        cnt_server_config = value;
       });
     });
   }
@@ -151,7 +150,7 @@ class _HomepageState extends State<Homepage> {
 
       try {
         String api_get_machinename_sn =
-            'http://$server/vcc/get_data.php?server=$server&user=$username&password=$password&db_name=$databasename';
+            'http://$server/vcc_castlog/get_data.php?server=$server&user=$username&password=$password&db_name=$databasename';
 
         await Dio().get(api_get_machinename_sn).then((value) {
           print('Read M/C S/N: $value');
@@ -170,7 +169,6 @@ class _HomepageState extends State<Homepage> {
       }
     });
   }
-
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<Null> processReadSQLite_VccCastLog() async {
@@ -180,6 +178,13 @@ class _HomepageState extends State<Homepage> {
         load = false;
       });
     });
+  }
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> processReadSQLite_VccCastLog_GET_RecipeName() async {
+     await SQLiteHeltper().readsqliteVccCastLog_RecipeName();
+
+    //print('Read Recipe Name SQLite : ${results}');
   }
 
   //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -269,7 +274,7 @@ class _HomepageState extends State<Homepage> {
     String sn = _serialNumber!.substring(4);
     try {
       String apiInsertData =
-          'http://$server/vcc/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$sn&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
+          'http://$server/vcc_castlog/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$sn&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&max_heat_power=${max_heat_power.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
 
       await Dio().get(apiInsertData).then((value) {
         popup_information('Uploading data...\r\nSuccess');
@@ -286,11 +291,95 @@ class _HomepageState extends State<Homepage> {
     final DateTime now = DateTime.now();
     _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
-     String sn = _serialNumber!.substring(4);
+    String sn = _serialNumber!.substring(4);
 
-    SQLiteModelVccCastLog data = SQLiteModelVccCastLog(timestamp: _Timestamp!, machine_name: _machineName!, serial: sn, recipe_name: recipe_name.text, job_id: job_id.text, design_code: design_code.text, alloy: alloy.text, flask_temp: flask_temp.text, weight: weight_.text, wax: _wax!, wax_3d: _wax3D!, resin: _resin!, mode1: _mode1!, temp_setting_value: temp_setting_value.text, inert_gas: _inertGas!, airwash: _airWash!, s_curve: s_curve.text, acceleration: acceleration.text, rotation: rotation.text, pressure_pv: pressure_pv.text, rotation_time: rotation_time.text, exh_timing: exh_timing.text, mode2: _mode2!, origin_point: origin_point.text, arm_origin_speed: arm_origin_speed.text, zero_point_adjust: zero_point_adjust.text, laser_light: _laserLight!, emissivity: emissivity.text, casting_keep_time: casting_keep_time.text, casting_range_degree: casting_range_degree.text, p: p_.text, i: i_.text, d: d_.text);
+    SQLiteModelVccCastLog data = SQLiteModelVccCastLog(
+        timestamp: _Timestamp!,
+        machine_name: _machineName!,
+        serial: sn,
+        recipe_name: recipe_name.text,
+        job_id: job_id.text,
+        design_code: design_code.text,
+        alloy: alloy.text,
+        flask_temp: flask_temp.text,
+        weight: weight_.text,
+        wax: _wax!,
+        wax_3d: _wax3D!,
+        resin: _resin!,
+        mode1: _mode1!,
+        temp_setting_value: temp_setting_value.text,
+        max_heat_power: max_heat_power.text,
+        inert_gas: _inertGas!,
+        airwash: _airWash!,
+        s_curve: s_curve.text,
+        acceleration: acceleration.text,
+        rotation: rotation.text,
+        pressure_pv: pressure_pv.text,
+        rotation_time: rotation_time.text,
+        exh_timing: exh_timing.text,
+        mode2: _mode2!,
+        origin_point: origin_point.text,
+        arm_origin_speed: arm_origin_speed.text,
+        zero_point_adjust: zero_point_adjust.text,
+        laser_light: _laserLight!,
+        emissivity: emissivity.text,
+        casting_keep_time: casting_keep_time.text,
+        casting_range_degree: casting_range_degree.text,
+        p: p_.text,
+        i: i_.text,
+        d: d_.text);
 
     await SQLiteHeltper().insertValueToSQLite_VccCastLog(data).then((value) {
+      //Navigator.pop(context);
+    });
+  }
+
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Future<Null> processUpdateSQLite_VccCastLog() async {
+    // Insert
+    final DateTime now = DateTime.now();
+    _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
+
+    String sn = _serialNumber!.substring(4);
+
+    SQLiteModelVccCastLog data = SQLiteModelVccCastLog(
+        timestamp: _Timestamp!,
+        machine_name: _machineName!,
+        serial: sn,
+        recipe_name: recipe_name.text,
+        job_id: job_id.text,
+        design_code: design_code.text,
+        alloy: alloy.text,
+        flask_temp: flask_temp.text,
+        weight: weight_.text,
+        wax: _wax!,
+        wax_3d: _wax3D!,
+        resin: _resin!,
+        mode1: _mode1!,
+        temp_setting_value: temp_setting_value.text,
+        max_heat_power: max_heat_power.text,
+        inert_gas: _inertGas!,
+        airwash: _airWash!,
+        s_curve: s_curve.text,
+        acceleration: acceleration.text,
+        rotation: rotation.text,
+        pressure_pv: pressure_pv.text,
+        rotation_time: rotation_time.text,
+        exh_timing: exh_timing.text,
+        mode2: _mode2!,
+        origin_point: origin_point.text,
+        arm_origin_speed: arm_origin_speed.text,
+        zero_point_adjust: zero_point_adjust.text,
+        laser_light: _laserLight!,
+        emissivity: emissivity.text,
+        casting_keep_time: casting_keep_time.text,
+        casting_range_degree: casting_range_degree.text,
+        p: p_.text,
+        i: i_.text,
+        d: d_.text);
+
+    await SQLiteHeltper().updateValueToSQLiteVccCastLog(data).then((value) {
       //Navigator.pop(context);
     });
   }
@@ -302,7 +391,7 @@ class _HomepageState extends State<Homepage> {
     // TODO: implement initState
     super.initState();
 
-    process_count_row();
+    process_count_row_ServerConfig();
   }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -368,7 +457,7 @@ class _HomepageState extends State<Homepage> {
               ))
         ],
       ),
-      body: GestureDetector(
+      body: load ? ShowProgress() : GestureDetector(
         onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
         behavior: HitTestBehavior.opaque,
         child: Form(
@@ -380,7 +469,6 @@ class _HomepageState extends State<Homepage> {
               Container(
                 child: Row(
                   children: [
-                    
                     build_selectMachine(context),
                     build_recipelistbutton(),
                     build_recipe_name(recipe_name),
@@ -449,7 +537,7 @@ class _HomepageState extends State<Homepage> {
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 children: [
                   build_temp_setting(temp_setting_value),
-                  build_max_heatpower(max_heatpower),
+                  build_max_heatpower(max_heat_power),
                   build_s_curve(s_curve),
                   build_acceleration(acceleration),
                 ],
@@ -2067,11 +2155,29 @@ class _HomepageState extends State<Homepage> {
         borderRadius: BorderRadius.circular(10),
       ),
       child: ElevatedButton.icon(
-        onPressed: () {
+        onPressed: () async {
           if (formkey.currentState!.validate()) {
             if ((_machineName != 'VCCxx') && (_serialNumber != 'S/N:')) {
-              processInsertOrUpdateMySQL().then((value) => processInsertSQLite_VccCastLog());
-              print("Upload");
+              //1. Insert to MySQL
+              processInsertOrUpdateMySQL().then((value) {});
+
+              // SQLite
+              //1.Count row first
+              await SQLiteHeltper().getCountVccCastLog(recipe_name.text).then((value) {
+                print('Count Row VCC CastLog: $value');
+
+                if (value! > 0) {
+                  // Update
+                  processUpdateSQLite_VccCastLog();
+                  print("UPDATE");
+                } else {
+                  //2. Insert to SQLite
+                  processInsertSQLite_VccCastLog();
+                  print("INSERT");
+                }
+
+                print("Upload");
+              });
             } else {
               popup_error('Please select the machine.');
             }
@@ -2132,8 +2238,10 @@ class _HomepageState extends State<Homepage> {
           padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1),
         ),
         onPressed: () {
-          processReadSQLite_VccCastLog();
-          //Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecipeList()));
+          //processReadSQLite_VccCastLog();
+          //processReadSQLite_VccCastLog_GET_RecipeName();
+
+          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecipeList()));
         },
       ),
     );
@@ -2210,7 +2318,7 @@ class _HomepageState extends State<Homepage> {
           value: selectedValue,
           onChanged: (value) {
             setState(() {
-              process_count_row();
+              process_count_row_ServerConfig();
 
               selectedValue = value;
               _machineName = selectedValue;

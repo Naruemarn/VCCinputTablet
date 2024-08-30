@@ -19,6 +19,7 @@ class SQLiteModelVccCastLog {
 
   final String mode1;
   final String temp_setting_value;
+  final String max_heat_power;
   final String inert_gas;
   final String airwash;
   final String s_curve;
@@ -54,6 +55,7 @@ class SQLiteModelVccCastLog {
     required this.resin,
     required this.mode1,
     required this.temp_setting_value,
+    required this.max_heat_power,
     required this.inert_gas,
     required this.airwash,
     required this.s_curve,
@@ -90,6 +92,7 @@ class SQLiteModelVccCastLog {
     String? resin,
     String? mode1,
     String? temp_setting_value,
+    String? max_heat_power,
     String? inert_gas,
     String? airwash,
     String? s_curve,
@@ -125,6 +128,7 @@ class SQLiteModelVccCastLog {
       resin: resin ?? this.resin,
       mode1: mode1 ?? this.mode1,
       temp_setting_value: temp_setting_value ?? this.temp_setting_value,
+      max_heat_power: max_heat_power ?? this.max_heat_power,
       inert_gas: inert_gas ?? this.inert_gas,
       airwash: airwash ?? this.airwash,
       s_curve: s_curve ?? this.s_curve,
@@ -163,6 +167,7 @@ class SQLiteModelVccCastLog {
       'resin': resin,
       'mode1': mode1,
       'temp_setting_value': temp_setting_value,
+      'max_heat_power': max_heat_power,
       'inert_gas': inert_gas,
       'airwash': airwash,
       's_curve': s_curve,
@@ -201,6 +206,7 @@ class SQLiteModelVccCastLog {
       resin: map['resin'] as String,
       mode1: map['mode1'] as String,
       temp_setting_value: map['temp_setting_value'] as String,
+      max_heat_power: map['max_heat_power'] as String,
       inert_gas: map['inert_gas'] as String,
       airwash: map['airwash'] as String,
       s_curve: map['s_curve'] as String,
@@ -229,7 +235,7 @@ class SQLiteModelVccCastLog {
 
   @override
   String toString() {
-    return 'SQLiteModelVccCastLog(timestamp: $timestamp, machine_name: $machine_name, serial: $serial, recipe_name: $recipe_name, job_id: $job_id, design_code: $design_code, alloy: $alloy, flask_temp: $flask_temp, weight: $weight, wax: $wax, wax_3d: $wax_3d, resin: $resin, mode1: $mode1, temp_setting_value: $temp_setting_value, inert_gas: $inert_gas, airwash: $airwash, s_curve: $s_curve, acceleration: $acceleration, rotation: $rotation, pressure_pv: $pressure_pv, rotation_time: $rotation_time, exh_timing: $exh_timing, mode2: $mode2, origin_point: $origin_point, arm_origin_speed: $arm_origin_speed, zero_point_adjust: $zero_point_adjust, laser_light: $laser_light, emissivity: $emissivity, casting_keep_time: $casting_keep_time, casting_range_degree: $casting_range_degree, p: $p, i: $i, d: $d)';
+    return 'SQLiteModelVccCastLog(timestamp: $timestamp, machine_name: $machine_name, serial: $serial, recipe_name: $recipe_name, job_id: $job_id, design_code: $design_code, alloy: $alloy, flask_temp: $flask_temp, weight: $weight, wax: $wax, wax_3d: $wax_3d, resin: $resin, mode1: $mode1, temp_setting_value: $temp_setting_value, max_heat_power: $max_heat_power, inert_gas: $inert_gas, airwash: $airwash, s_curve: $s_curve, acceleration: $acceleration, rotation: $rotation, pressure_pv: $pressure_pv, rotation_time: $rotation_time, exh_timing: $exh_timing, mode2: $mode2, origin_point: $origin_point, arm_origin_speed: $arm_origin_speed, zero_point_adjust: $zero_point_adjust, laser_light: $laser_light, emissivity: $emissivity, casting_keep_time: $casting_keep_time, casting_range_degree: $casting_range_degree, p: $p, i: $i, d: $d)';
   }
 
   @override
@@ -251,6 +257,7 @@ class SQLiteModelVccCastLog {
       other.resin == resin &&
       other.mode1 == mode1 &&
       other.temp_setting_value == temp_setting_value &&
+      other.max_heat_power == max_heat_power &&
       other.inert_gas == inert_gas &&
       other.airwash == airwash &&
       other.s_curve == s_curve &&
@@ -288,6 +295,7 @@ class SQLiteModelVccCastLog {
       resin.hashCode ^
       mode1.hashCode ^
       temp_setting_value.hashCode ^
+      max_heat_power.hashCode ^
       inert_gas.hashCode ^
       airwash.hashCode ^
       s_curve.hashCode ^

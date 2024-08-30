@@ -34,7 +34,7 @@ class _SettingDBState extends State<SettingDB> {
     // TODO: implement initState
     super.initState();
 
-    process_count_row().then((value) {
+    process_count_row_ServerConfig().then((value) {
       print('Cnt Row Server Config: $cnt_server_config');
       if (cnt_server_config > 0) {
         load = true;
@@ -43,12 +43,14 @@ class _SettingDBState extends State<SettingDB> {
         load = false;
       }
     });
-    
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Future<Null> process_count_row() async {
-    await SQLiteHeltper().getCount().then((value) {
+  Future<Null> process_count_row_ServerConfig() async {
+    await SQLiteHeltper()
+        .getCount(SQLiteHeltper().tbl_serverSetting)
+        .then((value) {
       //print('Count Row: $value');
       setState(() {
         cnt_server_config = value!;
@@ -56,6 +58,8 @@ class _SettingDBState extends State<SettingDB> {
     });
   }
 
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<Null> processReadSQLite() async {
     await SQLiteHeltper().readsqlite_serversetting().then((value) {
       print('value on processReadSQLite ===> $value');
@@ -76,9 +80,24 @@ class _SettingDBState extends State<SettingDB> {
     return Scaffold(
       appBar: AppBar(
         title: Text(
-          'Server Setting',
+          'DATABASE SETTING',
           style: TextStyle(
-              color: Colors.white, fontSize: 25, fontWeight: FontWeight.bold),
+            color: Colors.white,
+            fontSize: 25,
+            fontWeight: FontWeight.bold,
+            shadows: <Shadow>[
+              Shadow(
+                offset: Offset(10.0, 10.0),
+                blurRadius: 3.0,
+                color: Color.fromARGB(255, 0, 0, 0),
+              ),
+              Shadow(
+                offset: Offset(10.0, 10.0),
+                blurRadius: 8.0,
+                color: Color.fromARGB(125, 0, 0, 255),
+              ),
+            ],
+          ),
         ),
         centerTitle: true,
         foregroundColor: Colors.white,
@@ -114,7 +133,6 @@ class _SettingDBState extends State<SettingDB> {
                             buildCancelButton(constraints),
                           ],
                         ),
-                        
                       ],
                     ),
                   ),
@@ -370,6 +388,7 @@ class _SettingDBState extends State<SettingDB> {
       ],
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Row buildCancelButton(BoxConstraints constraints) {
@@ -384,7 +403,7 @@ class _SettingDBState extends State<SettingDB> {
               Icons.cancel_outlined,
               size: 30,
             ),
-            onPressed: ()  {
+            onPressed: () {
               Navigator.pop(context);
             },
             label: Text(
@@ -400,5 +419,4 @@ class _SettingDBState extends State<SettingDB> {
   }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 }
