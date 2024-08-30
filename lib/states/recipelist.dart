@@ -93,7 +93,6 @@ class _RecipeListState extends State<RecipeList> {
                     ],
                   ));
   }
-}
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -111,9 +110,6 @@ Widget _listViewDismissible(List<RecipeList_Model> x) {
                 showAlertDelete(context, x[index].recipe_name);
               } else {}
             },
-            onDismissed: (direction) async {
-              print('You Taped --> ${x[index].recipe_name}');
-            },
             child: Card(
               child: ListTile(
                 // selected: _selectedItems.contains(index) ? true : false,
@@ -126,9 +122,9 @@ Widget _listViewDismissible(List<RecipeList_Model> x) {
                 subtitle: Text(x[index].timestamp),
                 onTap: () async{
                   print('You choose : ${x[index].recipe_name}');
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Center(child: Text('☑️  ${x[index].timestamp}     ${x[index].recipe_name}')), backgroundColor: Colors.blue,));
-                  await Future.delayed(const Duration(seconds: 2));
-                   Navigator.pop(context);
+                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Center(child: Text('You choose : ☑️  ${x[index].timestamp}     ${x[index].recipe_name}')), backgroundColor: Colors.blue,));
+                  //await Future.delayed(const Duration(seconds: 2));
+                   Navigator.pop(context, x[index].recipe_name);
                    
                 },
               ),
@@ -187,17 +183,25 @@ Widget slideLeftBackground() {
 void showAlertDelete(BuildContext context, String recipe_name) {
   // set up the buttons
   Widget cancelButton = TextButton(
-    child: Text("Cancel"),
+    child: Text("No"),
     onPressed: () {
       Navigator.of(context).pop();
     },
   );
   Widget continueButton = TextButton(
-    child: Text("OK"),
-    onPressed: () {
+    child: Text("Yes"),
+    onPressed: (){
       //Delete
-
-      Navigator.of(context).pop();
+      SQLiteHeltper().deleteSQLiteWhereRecipeName(recipe_name).then((value) async {
+        
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Center(child: Text('Delete Success : ❌ $recipe_name')), backgroundColor: Colors.red,));
+        Navigator.of(context).pop();
+       
+        // Read again
+         GET_RecipeName();
+    
+      });
+      
     },
   );
 
@@ -211,7 +215,7 @@ void showAlertDelete(BuildContext context, String recipe_name) {
       ),
       Text(' Delete Recipe. ')
     ]),
-    content: Text("Would you like to remove $recipe_name?"),
+    content: Text("Would you like to Delete $recipe_name?"),
     actions: [
       cancelButton,
       continueButton,
@@ -230,3 +234,4 @@ void showAlertDelete(BuildContext context, String recipe_name) {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+}

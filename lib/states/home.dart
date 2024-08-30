@@ -68,7 +68,10 @@ class _HomepageState extends State<Homepage> {
 
   // Database
   MachineModel? machineModel;
+
   List<SQLiteModelServerSetting> sqliteModels = [];
+  List<SQLiteModelVccCastLog> recipe_list_model = [];
+
   bool load = true;
   int? cnt_server_config;
   String? server;
@@ -114,15 +117,33 @@ class _HomepageState extends State<Homepage> {
   // String? _p;
   // String? _i;
   // String? _d;
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Future<Null> GET_DataSQLite(String recipe_name) async {
+    await SQLiteHeltper()
+        .readsqliteVccCastLog_RecipeList(recipe_name)
+        .then((value) {
+      print('Read Data SQLite WHERE Recipe Name : ${value}');
+      setState(() {
+        load = false;
+        recipe_list_model = value;
+      });
+    });
+  }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<Null> process_count_row_ServerConfig() async {
-    await SQLiteHeltper().getCount(SQLiteHeltper().tbl_serverSetting).then((value) async {
+    await SQLiteHeltper()
+        .getCount(SQLiteHeltper().tbl_serverSetting)
+        .then((value) async {
       //print('Count Row: $value');
       if (value! > 0) {
         processReadSQLite();
       } else {
-        await Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingDB())).then((value) => processReadSQLite());
+        await Navigator.of(context)
+            .push(MaterialPageRoute(builder: (context) => SettingDB()))
+            .then((value) => processReadSQLite());
       }
 
       setState(() {
@@ -169,6 +190,7 @@ class _HomepageState extends State<Homepage> {
       }
     });
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<Null> processReadSQLite_VccCastLog() async {
@@ -179,10 +201,11 @@ class _HomepageState extends State<Homepage> {
       });
     });
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Future<Null> processReadSQLite_VccCastLog_GET_RecipeName() async {
-     await SQLiteHeltper().readsqliteVccCastLog_RecipeName();
+    await SQLiteHeltper().readsqliteVccCastLog_RecipeName();
 
     //print('Read Recipe Name SQLite : ${results}');
   }
@@ -336,7 +359,7 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-Future<Null> processUpdateSQLite_VccCastLog() async {
+  Future<Null> processUpdateSQLite_VccCastLog() async {
     // Insert
     final DateTime now = DateTime.now();
     _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
@@ -457,154 +480,156 @@ Future<Null> processUpdateSQLite_VccCastLog() async {
               ))
         ],
       ),
-      body: load ? ShowProgress() : GestureDetector(
-        onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
-        behavior: HitTestBehavior.opaque,
-        child: Form(
-          key: formkey,
-          child: ListView(
-            //crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 10),
-              Container(
-                child: Row(
+      body: load
+          ? ShowProgress()
+          : GestureDetector(
+              onTap: () => FocusScope.of(context).requestFocus(FocusNode()),
+              behavior: HitTestBehavior.opaque,
+              child: Form(
+                key: formkey,
+                child: ListView(
+                  //crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    build_selectMachine(context),
-                    build_recipelistbutton(),
-                    build_recipe_name(recipe_name),
-                    build_uploadtbutton(),
+                    SizedBox(height: 10),
+                    Container(
+                      child: Row(
+                        children: [
+                          build_selectMachine(context),
+                          build_recipelistbutton(),
+                          build_recipe_name(recipe_name),
+                          build_uploadtbutton(),
+                        ],
+                      ),
+                    ),
+                    // SizedBox(height: 15),
+                    //Divider(),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                build_serialnumber(),
+                                build_wax_wax3d_resin(),
+                              ],
+                            ),
+                            build_jobid(job_id),
+                            build_design_code(design_code),
+                            build_alloy(alloy),
+                            build_flask_temp(flask_temp),
+                            build_weight(weight_),
+                            //buildTitle('* Use or No'),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            build_image(),
+                            build_recommend_to_fill(),
+                          ],
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 10),
+                    // Divider(),
+                    Row(
+                      //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        Column(
+                          children: [
+                            buildTitle('Mode1', 6, 20),
+                            build_manual_auto_button(),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            buildTitle('Inert-Gas', 10, 20),
+                            build_InertGas(),
+                          ],
+                        ),
+                        Column(
+                          children: [
+                            buildTitle('Air-Wash', 10, 20),
+                            build_airwash(),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        build_temp_setting(temp_setting_value),
+                        build_max_heatpower(max_heat_power),
+                        build_s_curve(s_curve),
+                        build_acceleration(acceleration),
+                      ],
+                    ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        build_rotation(rotation),
+                        build_pressure_pv(pressure_pv),
+                        build_rotation_time(rotation_time),
+                        build_exh_timing(exh_timing),
+                      ],
+                    ),
+                    // SizedBox(height: 15),
+                    // Divider(),
+                    Row(
+                      children: [
+                        Column(
+                          children: [
+                            buildTitle('Mode2', 6, 20),
+                            build_normal_release_keep(),
+                          ],
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        buildTitle_with_backgroundColor('GENERAL SETTING', 6, 0,
+                            8, Color.fromARGB(255, 23, 207, 170), 252),
+                        buildTitle_with_backgroundColor('PRESSURE SENSOR', 12,
+                            0, 8, Color.fromARGB(95, 36, 106, 236), 120),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        build_origin_point(origin_point),
+                        build_arm_origin_speed(arm_origin_speed),
+                        build_zero_point_adjust(zero_point_adjust),
+                      ],
+                    ),
+                    buildTitle_with_backgroundColor('THERMO SENSOR', 6, 316, 8,
+                        Color.fromARGB(255, 73, 158, 238), 252),
+                    Row(
+                      children: [
+                        //buildTitle('Laser light:', 6, 0),
+                        //build_toggle_switch_laser_light(),
+                        build_laserlight_onoff(),
+                        build_emissivity(emissivity),
+                      ],
+                    ),
+                    // SizedBox(height: 10),
+                    // Divider(),
+                    buildTitle_with_backgroundColor_tempcontroller(),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        build_casting_keep_time(casting_keep_time),
+                        build_casting_range_degree(casting_range_degree),
+                        build_p(p_),
+                        build_i(i_),
+                        build_d(d_),
+                      ],
+                    ),
                   ],
                 ),
               ),
-              // SizedBox(height: 15),
-              //Divider(),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                //mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          build_serialnumber(),
-                          build_wax_wax3d_resin(),
-                        ],
-                      ),
-                      build_jobid(job_id),
-                      build_design_code(design_code),
-                      build_alloy(alloy),
-                      build_flask_temp(flask_temp),
-                      build_weight(weight_),
-                      //buildTitle('* Use or No'),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      build_image(),
-                      build_recommend_to_fill(),
-                    ],
-                  ),
-                ],
-              ),
-              SizedBox(height: 10),
-              // Divider(),
-              Row(
-                //mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: [
-                      buildTitle('Mode1', 6, 20),
-                      build_manual_auto_button(),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      buildTitle('Inert-Gas', 10, 20),
-                      build_InertGas(),
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      buildTitle('Air-Wash', 10, 20),
-                      build_airwash(),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  build_temp_setting(temp_setting_value),
-                  build_max_heatpower(max_heat_power),
-                  build_s_curve(s_curve),
-                  build_acceleration(acceleration),
-                ],
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  build_rotation(rotation),
-                  build_pressure_pv(pressure_pv),
-                  build_rotation_time(rotation_time),
-                  build_exh_timing(exh_timing),
-                ],
-              ),
-              // SizedBox(height: 15),
-              // Divider(),
-              Row(
-                children: [
-                  Column(
-                    children: [
-                      buildTitle('Mode2', 6, 20),
-                      build_normal_release_keep(),
-                    ],
-                  ),
-                ],
-              ),
-              Row(
-                children: [
-                  buildTitle_with_backgroundColor('GENERAL SETTING', 6, 0, 8,
-                      Color.fromARGB(255, 23, 207, 170), 252),
-                  buildTitle_with_backgroundColor('PRESSURE SENSOR', 12, 0, 8,
-                      Color.fromARGB(95, 36, 106, 236), 120),
-                ],
-              ),
-              Row(
-                children: [
-                  build_origin_point(origin_point),
-                  build_arm_origin_speed(arm_origin_speed),
-                  build_zero_point_adjust(zero_point_adjust),
-                ],
-              ),
-              buildTitle_with_backgroundColor('THERMO SENSOR', 6, 316, 8,
-                  Color.fromARGB(255, 73, 158, 238), 252),
-              Row(
-                children: [
-                  //buildTitle('Laser light:', 6, 0),
-                  //build_toggle_switch_laser_light(),
-                  build_laserlight_onoff(),
-                  build_emissivity(emissivity),
-                ],
-              ),
-              // SizedBox(height: 10),
-              // Divider(),
-              buildTitle_with_backgroundColor_tempcontroller(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  build_casting_keep_time(casting_keep_time),
-                  build_casting_range_degree(casting_range_degree),
-                  build_p(p_),
-                  build_i(i_),
-                  build_d(d_),
-                ],
-              ),
-            ],
-          ),
-        ),
-      ),
+            ),
     );
   }
 
@@ -2158,25 +2183,37 @@ Future<Null> processUpdateSQLite_VccCastLog() async {
         onPressed: () async {
           if (formkey.currentState!.validate()) {
             if ((_machineName != 'VCCxx') && (_serialNumber != 'S/N:')) {
-              //1. Insert to MySQL
-              processInsertOrUpdateMySQL().then((value) {});
-
-              // SQLite
-              //1.Count row first
-              await SQLiteHeltper().getCountVccCastLog(recipe_name.text).then((value) {
-                print('Count Row VCC CastLog: $value');
-
-                if (value! > 0) {
-                  // Update
-                  processUpdateSQLite_VccCastLog();
-                  print("UPDATE");
+              // Count row <= 20
+              await SQLiteHeltper()
+                  .getCount(SQLiteHeltper().tbl_vcc_castlog)
+                  .then((value) async {
+                if (value! >= 2) {
+                  popup_error('Please delete 1 Recipe to save the current Recipe.');
+                  print("Please delete 1 Recipe to save the current Recipe.");
                 } else {
-                  //2. Insert to SQLite
-                  processInsertSQLite_VccCastLog();
-                  print("INSERT");
-                }
+                  //1. Insert to MySQL
+                  processInsertOrUpdateMySQL().then((value) {});
 
-                print("Upload");
+                  // SQLite
+                  //1.Count row first
+                  await SQLiteHeltper()
+                      .getCountVccCastLog(recipe_name.text)
+                      .then((value) {
+                    print('Count Row VCC CastLog: $value');
+
+                    if (value! > 0) {
+                      // Update
+                      processUpdateSQLite_VccCastLog();
+                      print("UPDATE");
+                    } else {
+                      //2. Insert to SQLite
+                      processInsertSQLite_VccCastLog();
+                      print("INSERT");
+                    }
+
+                    print("Upload");
+                  });
+                }
               });
             } else {
               popup_error('Please select the machine.');
@@ -2237,11 +2274,148 @@ Future<Null> processUpdateSQLite_VccCastLog() async {
           elevation: 10,
           padding: EdgeInsets.symmetric(horizontal: 1, vertical: 1),
         ),
-        onPressed: () {
+        onPressed: () async {
           //processReadSQLite_VccCastLog();
           //processReadSQLite_VccCastLog_GET_RecipeName();
 
-          Navigator.of(context).push(MaterialPageRoute(builder: (context) => RecipeList()));
+          final String xxx = await Navigator.of(context)
+              .push(MaterialPageRoute(builder: (context) => RecipeList()));
+
+          setState(() {
+            GET_DataSQLite(xxx).then((value) {
+              _machineName = recipe_list_model[0].machine_name;
+              selectedValue = _machineName;
+
+              _serialNumber = 'S/N:${recipe_list_model[0].serial}';
+              recipe_name.text = recipe_list_model[0].recipe_name;
+
+              job_id.text = recipe_list_model[0].job_id;
+              design_code.text = recipe_list_model[0].design_code;
+              alloy.text = recipe_list_model[0].alloy;
+              flask_temp.text = recipe_list_model[0].flask_temp;
+              weight_.text = recipe_list_model[0].weight;
+
+              // Wax Wax3D Resin
+              _wax = recipe_list_model[0].wax;
+              _wax3D = recipe_list_model[0].wax_3d;
+              _resin = recipe_list_model[0].resin;
+
+              if (_wax == '1') {
+                isSelected1[0] = true;
+              } else {
+                isSelected1[0] = false;
+              }
+
+              if (_wax3D == '1') {
+                isSelected1[1] = true;
+              } else {
+                isSelected1[1] = false;
+              }
+
+              if (_resin == '1') {
+                isSelected1[2] = true;
+              } else {
+                isSelected1[2] = false;
+              }
+
+              // Mode1
+              _mode1 = recipe_list_model[0].mode1;
+              if (_mode1 == 'Manual') {
+                isSelected2[0] = true;
+                isSelected2[1] = false;
+              } else {
+                isSelected2[0] = false;
+                isSelected2[1] = true;
+              }
+
+              temp_setting_value.text = recipe_list_model[0].temp_setting_value;
+              max_heat_power.text = recipe_list_model[0].max_heat_power;
+              s_curve.text = recipe_list_model[0].s_curve;
+              acceleration.text = recipe_list_model[0].acceleration;
+              rotation.text = recipe_list_model[0].rotation;
+              pressure_pv.text = recipe_list_model[0].pressure_pv;
+              rotation_time.text = recipe_list_model[0].rotation_time;
+              exh_timing.text = recipe_list_model[0].exh_timing;
+
+              // Inert Gas
+              _inertGas = recipe_list_model[0].inert_gas;
+              if (_inertGas == 'No') {
+                isSelected3[0] = true;
+                isSelected3[1] = false;
+                isSelected3[2] = false;
+              } else if (_inertGas == 'Argon') {
+                isSelected3[0] = false;
+                isSelected3[1] = true;
+                isSelected3[2] = false;
+              } else if (_inertGas == 'Nitrogen') {
+                isSelected3[0] = false;
+                isSelected3[1] = false;
+                isSelected3[2] = true;
+              }
+
+              // Air Wash
+              _airWash = recipe_list_model[0].airwash;
+              if (_airWash == '0') {
+                isSelected4[0] = true;
+                isSelected4[1] = false;
+                isSelected4[2] = false;
+                isSelected4[3] = false;
+              } else if (_airWash == '1') {
+                isSelected4[0] = false;
+                isSelected4[1] = true;
+                isSelected4[2] = false;
+                isSelected4[3] = false;
+              } else if (_airWash == '2') {
+                isSelected4[0] = false;
+                isSelected4[1] = false;
+                isSelected4[2] = true;
+                isSelected4[3] = false;
+              } else if (_airWash == '3') {
+                isSelected4[0] = false;
+                isSelected4[1] = false;
+                isSelected4[2] = false;
+                isSelected4[3] = true;
+              }
+
+              // Mode2
+              _mode2 = recipe_list_model[0].mode2;
+              if (_mode2 == 'Normal') {
+                isSelected5[0] = true;
+                isSelected5[1] = false;
+                isSelected5[2] = false;
+              } else if (_mode2 == 'Release') {
+                isSelected5[0] = false;
+                isSelected5[1] = true;
+                isSelected5[2] = false;
+              } else if (_mode2 == 'Keep') {
+                isSelected5[0] = false;
+                isSelected5[1] = false;
+                isSelected5[2] = true;
+              }
+
+              origin_point.text = recipe_list_model[0].origin_point;
+              arm_origin_speed.text = recipe_list_model[0].arm_origin_speed;
+              zero_point_adjust.text = recipe_list_model[0].zero_point_adjust;
+
+              // // Laser light
+              _laserLight = recipe_list_model[0].laser_light;
+              if (_laserLight == 'On') {
+                isSelected6[0] = true;
+                isSelected6[1] = false;
+              } else {
+                isSelected6[0] = false;
+                isSelected6[1] = true;
+              }
+
+              emissivity.text = recipe_list_model[0].emissivity;
+              casting_keep_time.text = recipe_list_model[0].casting_keep_time;
+              casting_range_degree.text =
+                  recipe_list_model[0].casting_range_degree;
+              p_.text = recipe_list_model[0].p;
+              i_.text = recipe_list_model[0].i;
+              d_.text = recipe_list_model[0].d;
+            });
+          });
         },
       ),
     );
