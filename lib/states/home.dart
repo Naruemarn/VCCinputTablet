@@ -2187,7 +2187,7 @@ class _HomepageState extends State<Homepage> {
               await SQLiteHeltper()
                   .getCount(SQLiteHeltper().tbl_vcc_castlog)
                   .then((value) async {
-                if (value! >= 2) {
+                if (value! > 20) {
                   popup_error('Please delete 1 Recipe to save the current Recipe.');
                   print("Please delete 1 Recipe to save the current Recipe.");
                 } else {
@@ -2280,6 +2280,8 @@ class _HomepageState extends State<Homepage> {
 
           final String xxx = await Navigator.of(context)
               .push(MaterialPageRoute(builder: (context) => RecipeList()));
+
+          print(xxx);
 
           setState(() {
             GET_DataSQLite(xxx).then((value) {
