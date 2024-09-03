@@ -12,6 +12,7 @@ class MyConstant {
 
   // Image
   static String image1 = 'images/image1.jpg';
+  static String logo = 'images/launch_image.png';
 
   // Color
   static Color primary = Colors.teal;

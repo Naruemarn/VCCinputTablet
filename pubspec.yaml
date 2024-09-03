@@ -18,6 +18,15 @@ dependencies:
   slideable: ^0.0.2
   permission_handler: ^11.3.1
   flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.13
+
+flutter_native_spash:
+  android: true
+  image: "images/launch_image.png"
+  android_12: 
+    image: "images/launch_image.png"
+  color: "#9f9f9f"
+  fill: true
 
 flutter_icons:
   android: true

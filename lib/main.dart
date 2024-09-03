@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:vccinputtablet/states/home.dart';
 import 'package:vccinputtablet/states/input.dart';
 import 'package:vccinputtablet/states/recipelist.dart';
@@ -16,7 +17,17 @@ String? initialRoute ;
 
 void main() {
   initialRoute = MyConstant.routeHomepage;
-  runApp(MyApp());
+
+  // We need to call it manually,
+  // because we going to call setPreferredOrientations()
+  // before the runApp() call
+  WidgetsFlutterBinding.ensureInitialized();
+
+
+  // Than we setup preferred orientations,
+  // and only after it finished we run our app
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp])
+      .then((value) => runApp(MyApp()));
 }
 
 class MyApp extends StatelessWidget {
@@ -33,18 +44,3 @@ class MyApp extends StatelessWidget {
   }
 }
 
-
-// class MainApp extends StatelessWidget {
-//   const MainApp({super.key});
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return const MaterialApp(
-//       home: Scaffold(
-//         body: Center(
-//           child: Text('Hello World!'),
-//         ),
-//       ),
-//     );
-//   }
-// }

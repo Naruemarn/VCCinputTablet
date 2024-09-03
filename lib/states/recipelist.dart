@@ -11,6 +11,10 @@ class RecipeList extends StatefulWidget {
 }
 
 class _RecipeListState extends State<RecipeList> {
+  TextEditingController txtQuery = new TextEditingController();
+
+  List<RecipeList_Model> original = [];
+
   List<RecipeList_Model> recipe_list_model = [];
   bool load = true;
   bool f_no_data = true;
@@ -27,6 +31,7 @@ class _RecipeListState extends State<RecipeList> {
         } else {
           f_no_data = false;
           recipe_list_model = value;
+          original = recipe_list_model;
         }
       });
     });
@@ -88,10 +93,23 @@ class _RecipeListState extends State<RecipeList> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ))
                 : Column(
-                    children: [
-                      _listViewDismissible(recipe_list_model),
-                    ],
-                  ));
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  SizedBox(height: 10),
+                  buildTextboxSearch(),
+                   
+                ],
+              ),
+            ),
+           _listViewDismissible(recipe_list_model)
+          ]),);
   }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -233,5 +251,57 @@ void showAlertDelete(BuildContext context, String recipe_name) {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  void search(String query) {
+    // if (query.isEmpty) {
+    //   recipe_list_model = original;
+    //   setState(() {});
+    //   return;
+    // }
 
+    recipe_list_model = original;
+    
+    query = query.toLowerCase();
+    print('query ->  $query');
+
+    List<RecipeList_Model> xx = [];
+
+    recipe_list_model.forEach((p) {
+      var name = p.recipe_name.toString().toLowerCase();
+      if (name.contains(query)) {
+        xx.add(p);
+      }
+    });
+
+    recipe_list_model = xx;
+    // String as = result[0].toString();
+    print('Search result ==>  $xx');
+    setState(() {});
+  }
+ //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------  
+  Widget buildTextboxSearch() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: TextFormField(
+        controller: txtQuery,
+        onChanged: search,
+        decoration: InputDecoration(
+          hintText: "Search",
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(4.0)),
+          focusedBorder:
+              OutlineInputBorder(borderSide: BorderSide(color: Colors.black)),
+          prefixIcon: Icon(Icons.search),
+          suffixIcon: IconButton(
+            icon: Icon(Icons.clear),
+            onPressed: () {
+              txtQuery.text = '';
+              search(txtQuery.text);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+  //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 }

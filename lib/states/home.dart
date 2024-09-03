@@ -5,6 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_switch/flutter_switch.dart';
 import 'package:intl/intl.dart';
 import 'package:vccinputtablet/models/machine_model.dart';
 import 'package:vccinputtablet/models/sqlite_model_server_setting.dart';
@@ -14,6 +15,7 @@ import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 import 'package:vccinputtablet/utility/sqlite_helper.dart';
+import 'package:vccinputtablet/widgets/show_image.dart';
 import 'package:vccinputtablet/widgets/show_progress.dart';
 
 class Homepage extends StatefulWidget {
@@ -25,13 +27,14 @@ class Homepage extends StatefulWidget {
 
 class _HomepageState extends State<Homepage> {
   // Button
-  //bool status_toggle = false;
+  bool status_toggle_laserlight = false;
+
   var isSelected1 = [true, false, false]; // Wax , Wax (3D), Resin
   var isSelected2 = [true, false]; // Manual , Auto
   var isSelected3 = [true, false, false]; // No, Argon, Nitrogen
   var isSelected4 = [true, false, false, false]; // No, 1times, 2times, 3times
   var isSelected5 = [true, false, false]; // Normal , Release, Keep
-  var isSelected6 = [true, false]; // On , Off
+  //var isSelected6 = [true, false]; // On , Off
 
   // Textbox
   final formkey = GlobalKey<FormState>();
@@ -80,9 +83,10 @@ class _HomepageState extends State<Homepage> {
   String? databasename;
 
   // Variable
-  String? _Timestamp = '2000-01-01 "00:00:00';
+  String? _Timestamp = '2000-01-01 00:00:00';
+  String? show_timestamp = '2000-01-01 00:00:00';
   String? _machineName = 'VCCxx';
-  String? _serialNumber = 'S/N:';
+  String? _serialNumber = '';
   // String? _recipeName;
 
   // String? _jobId;
@@ -294,10 +298,14 @@ class _HomepageState extends State<Homepage> {
     final DateTime now = DateTime.now();
     _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
-    String sn = _serialNumber!.substring(4);
+    setState(() {
+      show_timestamp = _Timestamp;
+    });
+
+    //String sn = _serialNumber!.substring(4);
     try {
       String apiInsertData =
-          'http://$server/vcc_castlog/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$sn&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&max_heat_power=${max_heat_power.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
+          'http://$server/vcc_castlog/insertData.php?server=$server&user=$username&password=$password&db_name=$databasename&timestamp=$_Timestamp&machine_name=$_machineName&serial=$_serialNumber&recipe_name=${recipe_name.text}&job_id=${job_id.text}&design_code=${design_code.text}&alloy=${alloy.text}&flask_temp=${flask_temp.text}&weight=${weight_.text}&wax=${_wax}&wax_3d=${_wax3D}&resin=${_resin}&mode1=${_mode1}&temp_setting_value=${temp_setting_value.text}&max_heat_power=${max_heat_power.text}&inert_gas=${_inertGas}&airwash=${_airWash}&s_curve=${s_curve.text}&acceleration=${acceleration.text}&rotation=${rotation.text}&pressure_pv=${pressure_pv.text}&rotation_time=${rotation_time.text}&exh_timing=${exh_timing.text}&mode2=${_mode2}&origin_point=${origin_point.text}&arm_origin_speed=${arm_origin_speed.text}&zero_point_adjust=${zero_point_adjust.text}&laser_light=${_laserLight}&emissivity=${emissivity.text}&casting_keep_time=${casting_keep_time.text}&casting_range_degree=${casting_range_degree.text}&p=${p_.text}&i=${i_.text}&d=${d_.text}';
 
       await Dio().get(apiInsertData).then((value) {
         popup_information('Uploading data...\r\nSuccess');
@@ -314,12 +322,16 @@ class _HomepageState extends State<Homepage> {
     final DateTime now = DateTime.now();
     _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
-    String sn = _serialNumber!.substring(4);
+    setState(() {
+      show_timestamp = _Timestamp;
+    });
+
+    //String sn = _serialNumber!.substring(4);
 
     SQLiteModelVccCastLog data = SQLiteModelVccCastLog(
         timestamp: _Timestamp!,
         machine_name: _machineName!,
-        serial: sn,
+        serial: _serialNumber!,
         recipe_name: recipe_name.text,
         job_id: job_id.text,
         design_code: design_code.text,
@@ -364,12 +376,16 @@ class _HomepageState extends State<Homepage> {
     final DateTime now = DateTime.now();
     _Timestamp = DateFormat('yyyy-MM-dd HH:mm:ss').format(now);
 
-    String sn = _serialNumber!.substring(4);
+    setState(() {
+      show_timestamp = _Timestamp;
+    });
+
+    //String sn = _serialNumber!.substring(4);
 
     SQLiteModelVccCastLog data = SQLiteModelVccCastLog(
         timestamp: _Timestamp!,
         machine_name: _machineName!,
-        serial: sn,
+        serial: _serialNumber!,
         recipe_name: recipe_name.text,
         job_id: job_id.text,
         design_code: design_code.text,
@@ -424,6 +440,15 @@ class _HomepageState extends State<Homepage> {
     return Scaffold(
       //resizeToAvoidBottomInset: false,
       appBar: AppBar(
+        leading: Center(
+          child: CircleAvatar(radius: (25),
+              backgroundColor: Colors.white,
+              child: ClipRRect(
+                borderRadius:BorderRadius.circular(25),
+                child: ShowImage(path: MyConstant.logo),
+              )
+          ),
+        ),
         title: Text(
           'VCC CASTLOG',
           style: TextStyle(
@@ -493,6 +518,7 @@ class _HomepageState extends State<Homepage> {
                     SizedBox(height: 10),
                     Container(
                       child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           build_selectMachine(context),
                           build_recipelistbutton(),
@@ -504,19 +530,15 @@ class _HomepageState extends State<Homepage> {
                     // SizedBox(height: 15),
                     //Divider(),
                     Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      //mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      //crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              children: [
-                                build_serialnumber(),
-                                build_wax_wax3d_resin(),
-                              ],
-                            ),
+                            build_serialnumber(),                                                       
+                            build_wax_wax3d_resin(14),
                             build_jobid(job_id),
                             build_design_code(design_code),
                             build_alloy(alloy),
@@ -527,39 +549,40 @@ class _HomepageState extends State<Homepage> {
                         ),
                         Column(
                           children: [
+                            build_timestamp(), 
                             build_image(),
                             build_recommend_to_fill(),
                           ],
                         ),
                       ],
                     ),
-                    SizedBox(height: 10),
+                    //SizedBox(height: 10),
                     // Divider(),
                     Row(
-                      //mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Column(
                           children: [
-                            buildTitle('Mode1', 6, 20),
-                            build_manual_auto_button(),
+                            buildTitle('Mode1', 6, 5),
+                            build_manual_auto_button(14),
                           ],
                         ),
                         Column(
                           children: [
-                            buildTitle('Inert-Gas', 10, 20),
-                            build_InertGas(),
+                            buildTitle('Inert-Gas', 6, 5),
+                            build_InertGas(14),
                           ],
                         ),
                         Column(
                           children: [
-                            buildTitle('Air-Wash', 10, 20),
-                            build_airwash(),
+                            buildTitle('Air-Wash', 6, 5),
+                            build_airwash(14),
                           ],
                         ),
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         build_temp_setting(temp_setting_value),
                         build_max_heatpower(max_heat_power),
@@ -568,7 +591,7 @@ class _HomepageState extends State<Homepage> {
                       ],
                     ),
                     Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         build_rotation(rotation),
                         build_pressure_pv(pressure_pv),
@@ -582,8 +605,8 @@ class _HomepageState extends State<Homepage> {
                       children: [
                         Column(
                           children: [
-                            buildTitle('Mode2', 6, 20),
-                            build_normal_release_keep(),
+                            buildTitle('Mode2', 6, 5),
+                            build_normal_release_keep(14),
                           ],
                         ),
                       ],
@@ -603,13 +626,18 @@ class _HomepageState extends State<Homepage> {
                         build_zero_point_adjust(zero_point_adjust),
                       ],
                     ),
-                    buildTitle_with_backgroundColor('THERMO SENSOR', 6, 316, 8,
+                    buildTitle_with_backgroundColor('THERMO SENSOR', 6, 6, 8,
                         Color.fromARGB(255, 73, 158, 238), 252),
                     Row(
                       children: [
-                        //buildTitle('Laser light:', 6, 0),
-                        //build_toggle_switch_laser_light(),
-                        build_laserlight_onoff(),
+                        Column(
+                          children: [
+                            buildTitle('Laser light', 6, 0),
+                            build_toggle_switch_laser_light(),
+                          ],
+                        ),
+                        
+                        //build_laserlight_onoff(14),
                         build_emissivity(emissivity),
                       ],
                     ),
@@ -635,7 +663,7 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  /*Container build_toggle_switch_laser_light() {
+  Container build_toggle_switch_laser_light() {
     return Container(
       margin: EdgeInsets.only(left: 6, right: 6, top: 1),
       height: 30,
@@ -651,19 +679,26 @@ class _HomepageState extends State<Homepage> {
         inactiveTextColor: Colors.black,
         valueFontSize: 10.0,
         toggleSize: 20.0,
-        value: status_toggle,
+        value: status_toggle_laserlight,
         borderRadius: 30.0,
         padding: 4.0,
         showOnOff: true,
         onToggle: (val) {
           setState(() {
-            status_toggle = val;
-            print('Thermo sensor: $status_toggle');
+            status_toggle_laserlight = val;
+
+            if (status_toggle_laserlight) {
+              _laserLight = 'On';
+            } else {
+              _laserLight = 'Off';
+            }
+
+            print('Thermo sensor: $status_toggle_laserlight');
           });
         },
       ),
     );
-  }*/
+  }
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -691,40 +726,47 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_wax_wax3d_resin() {
-    return Container(
-      margin: EdgeInsets.only(left: 6, top: 8),
-      height: 30,
-      //width: 170,
-      //color: Colors.pink,
-      child: FittedBox(
-        fit: BoxFit.fill,
+  Widget build_wax_wax3d_resin(double fontsize) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Container(
+        margin: EdgeInsets.only(left: 6, top: 6),
+        height: 30,
+        //width: 170,
+                decoration: BoxDecoration(                
+                  color: Colors.grey,
+                  //border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                ),
+        
         child: ToggleButtons(
-          //constraints: BoxConstraints.expand(height: 30, width: 54),
+          //constraints: BoxConstraints.expand(height: 30, width: 50),
+          //color:Colors.grey[700],
+          
           fillColor: Colors.lightGreen,
-          selectedColor: Colors.purple,
-          borderColor: Colors.blueGrey,
+          selectedColor: Colors.white,
+          borderColor: Colors.orange,
           borderWidth: 2,
-          selectedBorderColor: Colors.blue,
-          splashColor: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
+          selectedBorderColor: Colors.orange,
+          splashColor: Colors.green,
+          borderRadius: BorderRadius.circular(30),
           children: [
             Text('Wax',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Wax (3D)',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Resin',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -732,25 +774,25 @@ class _HomepageState extends State<Homepage> {
             setState(() {
               isSelected1[index] = !isSelected1[index];
               print("Wax Wax3D Resin : ${isSelected1}");
-
+      
               if (isSelected1[0]) {
-                _wax = '1';
+                _wax = 'Use';
               } else {
-                _wax = '0';
+                _wax = 'No Use';
               }
-
+      
               if (isSelected1[1]) {
-                _wax3D = '1';
+                _wax3D = 'Use';
               } else {
-                _wax3D = '0';
+                _wax3D = 'No Use';
               }
-
+      
               if (isSelected1[2]) {
-                _resin = '1';
+                _resin = 'Use';
               } else {
-                _resin = '0';
+                _resin = 'No Use';
               }
-
+      
               print('Wax Wax3D Resin ===========> $_wax $_wax3D $_resin');
             });
           },
@@ -762,32 +804,41 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_laserlight_onoff() {
-    return Container(
-      margin: EdgeInsets.only(left: 6, right: 2, top: 5),
-      height: 30,
-      //color: Colors.pink,
-      child: FittedBox(
-        fit: BoxFit.fill,
+  /*Widget build_laserlight_onoff(double fontsize) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Container(
+        margin: EdgeInsets.only(left: 6, top: 6),
+        height: 30,
+        //width: 170,
+                decoration: BoxDecoration(                
+                  color: Colors.grey,
+                  //border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                ),
+        
         child: ToggleButtons(
+          //constraints: BoxConstraints.expand(height: 30, width: 50),
+          //color:Colors.grey[700],
+          
           fillColor: Colors.lightGreen,
-          selectedColor: Colors.purple,
-          borderColor: Colors.blueGrey,
-          borderWidth: 2,
-          selectedBorderColor: Colors.blue,
-          splashColor: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
+          selectedColor: Colors.white,
+          borderColor: Colors.orange,
+          borderWidth: 3,
+          selectedBorderColor: Colors.orange,
+          splashColor: Colors.green,
+          borderRadius: BorderRadius.circular(30),
           children: [
             Text('Laser light\r\nOn',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Laser light\r\nOff',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -815,44 +866,51 @@ class _HomepageState extends State<Homepage> {
         ),
       ),
     );
-  }
+  }*/
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_normal_release_keep() {
-    return Container(
-      margin: EdgeInsets.only(
-        left: 6,
-      ),
-      height: 30,
-      //color: Colors.pink,
-      child: FittedBox(
-        fit: BoxFit.fill,
+  Widget build_normal_release_keep(double fontsize) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Container(
+        margin: EdgeInsets.only(left: 6, top: 2),
+        height: 30,
+        //width: 170,
+                decoration: BoxDecoration(                
+                  color: Colors.grey,
+                  //border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                ),
+        
         child: ToggleButtons(
+          //constraints: BoxConstraints.expand(height: 30, width: 50),
+          //color:Colors.grey[700],
+          
           fillColor: Colors.lightGreen,
-          selectedColor: Colors.purple,
-          borderColor: Colors.blueGrey,
+          selectedColor: Colors.white,
+          borderColor: Colors.orange,
           borderWidth: 2,
-          selectedBorderColor: Colors.blue,
-          splashColor: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
+          selectedBorderColor: Colors.orange,
+          splashColor: Colors.green,
+          borderRadius: BorderRadius.circular(30),
           children: [
             Text('Normal',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Release',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Keep',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -890,46 +948,53 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_airwash() {
-    return Container(
-      margin: EdgeInsets.only(
-        left: 10,
-      ),
-      height: 30,
-      //color: Colors.pink,
-      child: FittedBox(
-        fit: BoxFit.fill,
+  Widget build_airwash(double fontsize) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Container(
+        margin: EdgeInsets.only(left: 6, right: 6, top: 2),
+        height: 30,
+        //width: 170,
+                decoration: BoxDecoration(                
+                  color: Colors.grey,
+                  //border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                ),
+        
         child: ToggleButtons(
+          //constraints: BoxConstraints.expand(height: 30, width: 50),
+          //color:Colors.grey[700],
+          
           fillColor: Colors.lightGreen,
-          selectedColor: Colors.purple,
-          borderColor: Colors.blueGrey,
+          selectedColor: Colors.white,
+          borderColor: Colors.orange,
           borderWidth: 2,
-          selectedBorderColor: Colors.blue,
-          splashColor: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
+          selectedBorderColor: Colors.orange,
+          splashColor: Colors.green,
+          borderRadius: BorderRadius.circular(30),
           children: [
             Text('No',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('1times',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('2times',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('3times',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -971,40 +1036,47 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_InertGas() {
-    return Container(
-      margin: EdgeInsets.only(
-        left: 10,
-      ),
-      height: 30,
-      //color: Colors.pink,
-      child: FittedBox(
-        fit: BoxFit.fill,
+  Widget build_InertGas(double fontsize) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Container(
+        margin: EdgeInsets.only(left: 6, top: 2),
+        height: 30,
+        //width: 170,
+                decoration: BoxDecoration(                
+                  color: Colors.grey,
+                  //border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                ),
+        
         child: ToggleButtons(
+          //constraints: BoxConstraints.expand(height: 30, width: 50),
+          //color:Colors.grey[700],
+          
           fillColor: Colors.lightGreen,
-          selectedColor: Colors.purple,
-          borderColor: Colors.blueGrey,
+          selectedColor: Colors.white,
+          borderColor: Colors.orange,
           borderWidth: 2,
-          selectedBorderColor: Colors.blue,
-          splashColor: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
+          selectedBorderColor: Colors.orange,
+          splashColor: Colors.green,
+          borderRadius: BorderRadius.circular(30),
           children: [
             Text('No',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Argon',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Nitrogen',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -1042,34 +1114,41 @@ class _HomepageState extends State<Homepage> {
 
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Widget build_manual_auto_button() {
-    return Container(
-      margin: EdgeInsets.only(
-        left: 6,
-      ),
-      height: 30,
-      //color: Colors.pink,
-      child: FittedBox(
-        fit: BoxFit.fill,
+  Widget build_manual_auto_button(double fontsize) {
+    return FittedBox(
+      fit: BoxFit.fill,
+      child: Container(
+        margin: EdgeInsets.only(left: 6, top: 2),
+        height: 30,
+        //width: 170,
+                decoration: BoxDecoration(                
+                  color: Colors.grey,
+                  //border: Border.all(color: Colors.black, width: 1.0),
+                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
+                ),
+        
         child: ToggleButtons(
+          //constraints: BoxConstraints.expand(height: 30, width: 50),
+          //color:Colors.grey[700],
+          
           fillColor: Colors.lightGreen,
-          selectedColor: Colors.purple,
-          borderColor: Colors.blueGrey,
+          selectedColor: Colors.white,
+          borderColor: Colors.orange,
           borderWidth: 2,
-          selectedBorderColor: Colors.blue,
-          splashColor: Colors.blue,
-          borderRadius: BorderRadius.circular(10),
+          selectedBorderColor: Colors.orange,
+          splashColor: Colors.green,
+          borderRadius: BorderRadius.circular(30),
           children: [
             Text('Manual',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
             Text('Auto',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                    fontSize: 12,
+                    fontSize: fontsize,
                     fontWeight: FontWeight.bold,
                     color: Colors.black)),
           ],
@@ -1159,7 +1238,7 @@ class _HomepageState extends State<Homepage> {
       child: Text(
         msg,
         style: TextStyle(
-            fontSize: 10, fontWeight: FontWeight.bold, color: Colors.black),
+            fontSize: 14, fontWeight: FontWeight.bold, color: Colors.black),
       ),
     );
   }
@@ -1384,7 +1463,7 @@ class _HomepageState extends State<Homepage> {
   Widget build_emissivity(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 12, right: 6, top: 5),
+      margin: EdgeInsets.only(left: 20, right: 6, top: 20),
       height: 30,
       width: 120,
       child: TextFormField(
@@ -1923,7 +2002,7 @@ class _HomepageState extends State<Homepage> {
           hintStyle: TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
           counterText: "",
           //prefixIcon: Icon(Icons.star,color: Colors.yellow, size: 16),
-          suffix: Text('℃'),
+          suffix: Text('g'),
           border: OutlineInputBorder(
             borderSide: BorderSide(width: 1, color: MyConstant.dark),
           ),
@@ -2116,7 +2195,7 @@ class _HomepageState extends State<Homepage> {
   Widget build_recipe_name(TextEditingController inputbox) {
     return Container(
       //color: Colors.pink,
-      margin: EdgeInsets.only(left: 6, top: 6),
+      margin: EdgeInsets.only(left: 6, top: 0),
       height: 30,
       width: 210,
       child: TextFormField(
@@ -2157,7 +2236,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Container build_uploadtbutton() {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 6),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 0),
       height: 30,
       width: 125,
       //color: Colors.red,
@@ -2182,7 +2261,7 @@ class _HomepageState extends State<Homepage> {
       child: ElevatedButton.icon(
         onPressed: () async {
           if (formkey.currentState!.validate()) {
-            if ((_machineName != 'VCCxx') && (_serialNumber != 'S/N:')) {
+            if ((_machineName != 'VCCxx') && (_serialNumber != '')) {
               // Count row <= 20
               await SQLiteHeltper()
                   .getCount(SQLiteHeltper().tbl_vcc_castlog)
@@ -2244,7 +2323,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Container build_recipelistbutton() {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 6),
+      margin: EdgeInsets.only(left: 6, top: 0),
       height: 30,
       width: 60,
       //color: Colors.red,
@@ -2265,7 +2344,7 @@ class _HomepageState extends State<Homepage> {
       child: ElevatedButton(
         child: Text("Recipe List",
             style: TextStyle(
-                color: Colors.black, fontSize: 8, fontWeight: FontWeight.bold),
+                color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
             textAlign: TextAlign.center),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -2288,7 +2367,8 @@ class _HomepageState extends State<Homepage> {
               _machineName = recipe_list_model[0].machine_name;
               selectedValue = _machineName;
 
-              _serialNumber = 'S/N:${recipe_list_model[0].serial}';
+              show_timestamp = recipe_list_model[0].timestamp;
+              _serialNumber = recipe_list_model[0].serial;
               recipe_name.text = recipe_list_model[0].recipe_name;
 
               job_id.text = recipe_list_model[0].job_id;
@@ -2302,19 +2382,19 @@ class _HomepageState extends State<Homepage> {
               _wax3D = recipe_list_model[0].wax_3d;
               _resin = recipe_list_model[0].resin;
 
-              if (_wax == '1') {
+              if (_wax == 'Use') {
                 isSelected1[0] = true;
               } else {
                 isSelected1[0] = false;
               }
 
-              if (_wax3D == '1') {
+              if (_wax3D == 'Use') {
                 isSelected1[1] = true;
               } else {
                 isSelected1[1] = false;
               }
 
-              if (_resin == '1') {
+              if (_resin == 'Use') {
                 isSelected1[2] = true;
               } else {
                 isSelected1[2] = false;
@@ -2402,11 +2482,13 @@ class _HomepageState extends State<Homepage> {
               // // Laser light
               _laserLight = recipe_list_model[0].laser_light;
               if (_laserLight == 'On') {
-                isSelected6[0] = true;
-                isSelected6[1] = false;
+                // isSelected6[0] = true;
+                // isSelected6[1] = false;
+                status_toggle_laserlight = true;
               } else {
-                isSelected6[0] = false;
-                isSelected6[1] = true;
+                // isSelected6[0] = false;
+                // isSelected6[1] = true;
+                status_toggle_laserlight = false;
               }
 
               emissivity.text = recipe_list_model[0].emissivity;
@@ -2422,14 +2504,32 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
-
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  Container build_timestamp() {
+    return Container(
+      margin: EdgeInsets.only(left: 6, top: 6),
+      height: 30,
+      width: 170,
+      color: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(6.0),
+        child: Text(
+          show_timestamp!,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.normal),
+        ),
+      ),
+    );
+  }
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Container build_serialnumber() {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 6),
+      margin: EdgeInsets.only(left: 6, top: 0),
       height: 30,
-      width: 76,
+      width: 170,
       color: Colors.lightBlueAccent,
       child: Padding(
         padding: const EdgeInsets.all(6.0),
@@ -2437,7 +2537,7 @@ class _HomepageState extends State<Homepage> {
           _serialNumber!,
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: Colors.black, fontSize: 10, fontWeight: FontWeight.normal),
+              color: Colors.black, fontSize: 14, fontWeight: FontWeight.normal),
         ),
       ),
     );
@@ -2447,7 +2547,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_selectMachine(BuildContext context) {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 6),
+      margin: EdgeInsets.only(left: 6, top: 0),
       height: 30,
       width: 110,
       //color: Colors.red,
@@ -2500,7 +2600,7 @@ class _HomepageState extends State<Homepage> {
               _machineName = selectedValue;
 
               int selectedIndex = listMachineName.indexOf(selectedValue!);
-              _serialNumber = 'S/N:' + listSerial[selectedIndex];
+              _serialNumber = listSerial[selectedIndex];
 
               //print('Select Machine Index: ${listMachineName.indexOf(selectedValue!)}');
             });
