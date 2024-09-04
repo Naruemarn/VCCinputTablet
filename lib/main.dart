@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:vccinputtablet/states/home.dart';
-import 'package:vccinputtablet/states/input.dart';
 import 'package:vccinputtablet/states/recipelist.dart';
 import 'package:vccinputtablet/states/setting_db.dart';
 import 'package:vccinputtablet/utility/my_constant.dart';
 
 final Map<String, WidgetBuilder> map = {
   '/homepage':(BuildContext context) => Homepage(),
-  '/inputpage':(BuildContext context) => InputForm(),
+  //'/inputpage':(BuildContext context) => InputForm(),
   '/recipelistpage':(BuildContext context) => RecipeList(),
   '/settingDBpage':(BuildContext context) => SettingDB(),
 };

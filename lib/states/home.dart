@@ -86,7 +86,7 @@ class _HomepageState extends State<Homepage> {
   String? _Timestamp = '2000-01-01 00:00:00';
   String? show_timestamp = '2000-01-01 00:00:00';
   String? _machineName = 'VCCxx';
-  String? _serialNumber = '';
+  String? _serialNumber = 'A1234';
   // String? _recipeName;
 
   // String? _jobId;
@@ -441,13 +441,13 @@ class _HomepageState extends State<Homepage> {
       //resizeToAvoidBottomInset: false,
       appBar: AppBar(
         leading: Center(
-          child: CircleAvatar(radius: (25),
+          child: CircleAvatar(
+              radius: (15),
               backgroundColor: Colors.white,
               child: ClipRRect(
-                borderRadius:BorderRadius.circular(25),
+                borderRadius: BorderRadius.circular(15),
                 child: ShowImage(path: MyConstant.logo),
-              )
-          ),
+              )),
         ),
         title: Text(
           'VCC CASTLOG',
@@ -537,7 +537,7 @@ class _HomepageState extends State<Homepage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            build_serialnumber(),                                                       
+                            build_serialnumber(),
                             build_wax_wax3d_resin(14),
                             build_jobid(job_id),
                             build_design_code(design_code),
@@ -549,7 +549,7 @@ class _HomepageState extends State<Homepage> {
                         ),
                         Column(
                           children: [
-                            build_timestamp(), 
+                            build_timestamp(),
                             build_image(),
                             build_recommend_to_fill(),
                           ],
@@ -636,7 +636,7 @@ class _HomepageState extends State<Homepage> {
                             build_toggle_switch_laser_light(),
                           ],
                         ),
-                        
+
                         //build_laserlight_onoff(14),
                         build_emissivity(emissivity),
                       ],
@@ -704,7 +704,7 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_image() {
     return Container(
-      margin: EdgeInsets.only(left: 6, right: 6, top: 8),
+      margin: EdgeInsets.only(left: 6, right: 6, top: 0),
       //color: MyConstant.dark,
       height: 220,
       width: 340,
@@ -727,77 +727,74 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_wax_wax3d_resin(double fontsize) {
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: Container(
-        margin: EdgeInsets.only(left: 6, top: 6),
-        height: 30,
-        //width: 170,
-                decoration: BoxDecoration(                
-                  color: Colors.grey,
-                  //border: Border.all(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                ),
-        
-        child: ToggleButtons(
-          //constraints: BoxConstraints.expand(height: 30, width: 50),
-          //color:Colors.grey[700],
-          
-          fillColor: Colors.lightGreen,
-          selectedColor: Colors.white,
-          borderColor: Colors.orange,
-          borderWidth: 2,
-          selectedBorderColor: Colors.orange,
-          splashColor: Colors.green,
-          borderRadius: BorderRadius.circular(30),
-          children: [
-            Text('Wax',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Wax (3D)',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Resin',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-          ],
-          onPressed: (int index) {
-            setState(() {
-              isSelected1[index] = !isSelected1[index];
-              print("Wax Wax3D Resin : ${isSelected1}");
-      
-              if (isSelected1[0]) {
-                _wax = 'Use';
-              } else {
-                _wax = 'No Use';
-              }
-      
-              if (isSelected1[1]) {
-                _wax3D = 'Use';
-              } else {
-                _wax3D = 'No Use';
-              }
-      
-              if (isSelected1[2]) {
-                _resin = 'Use';
-              } else {
-                _resin = 'No Use';
-              }
-      
-              print('Wax Wax3D Resin ===========> $_wax $_wax3D $_resin');
-            });
-          },
-          isSelected: isSelected1,
-        ),
+    return Container(
+      margin: EdgeInsets.only(left: 6, top: 6),
+      height: 30,
+      //width: 170,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        //border: Border.all(color: Colors.black, width: 1.0),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+
+      child: ToggleButtons(
+        //constraints: BoxConstraints.expand(height: 30, width: 50),
+        //color:Colors.grey[700],
+
+        fillColor: Colors.lightGreen,
+        selectedColor: Colors.white,
+        borderColor: Colors.grey[200],
+        borderWidth: 3,
+        selectedBorderColor: Colors.deepOrange,
+        splashColor: Colors.yellow,
+        borderRadius: BorderRadius.circular(30),
+        children: [
+          Text('Wax',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Wax (3D)',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Resin',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+        ],
+        onPressed: (int index) {
+          setState(() {
+            isSelected1[index] = !isSelected1[index];
+            print("Wax Wax3D Resin : ${isSelected1}");
+
+            if (isSelected1[0]) {
+              _wax = 'Use';
+            } else {
+              _wax = 'No Use';
+            }
+
+            if (isSelected1[1]) {
+              _wax3D = 'Use';
+            } else {
+              _wax3D = 'No Use';
+            }
+
+            if (isSelected1[2]) {
+              _resin = 'Use';
+            } else {
+              _resin = 'No Use';
+            }
+
+            print('Wax Wax3D Resin ===========> $_wax $_wax3D $_resin');
+          });
+        },
+        isSelected: isSelected1,
       ),
     );
   }
@@ -871,77 +868,74 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_normal_release_keep(double fontsize) {
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: Container(
-        margin: EdgeInsets.only(left: 6, top: 2),
-        height: 30,
-        //width: 170,
-                decoration: BoxDecoration(                
-                  color: Colors.grey,
-                  //border: Border.all(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                ),
-        
-        child: ToggleButtons(
-          //constraints: BoxConstraints.expand(height: 30, width: 50),
-          //color:Colors.grey[700],
-          
-          fillColor: Colors.lightGreen,
-          selectedColor: Colors.white,
-          borderColor: Colors.orange,
-          borderWidth: 2,
-          selectedBorderColor: Colors.orange,
-          splashColor: Colors.green,
-          borderRadius: BorderRadius.circular(30),
-          children: [
-            Text('Normal',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Release',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Keep',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-          ],
-          onPressed: (int index) {
-            setState(() {
-              for (int buttonIndex = 0;
-                  buttonIndex < isSelected5.length;
-                  buttonIndex++) {
-                if (buttonIndex == index) {
-                  isSelected5[buttonIndex] = true;
-                } else {
-                  isSelected5[buttonIndex] = false;
-                }
-                print("Normal Release Keep : ${isSelected5}");
+    return Container(
+      margin: EdgeInsets.only(left: 6, top: 2),
+      height: 30,
+      //width: 170,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        //border: Border.all(color: Colors.black, width: 1.0),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
 
-                if (isSelected5[0]) {
-                  _mode2 = 'Normal';
-                }
+      child: ToggleButtons(
+        //constraints: BoxConstraints.expand(height: 30, width: 50),
+        //color:Colors.grey[700],
 
-                if (isSelected5[1]) {
-                  _mode2 = 'Release';
-                }
-
-                if (isSelected5[2]) {
-                  _mode2 = 'Keep';
-                }
+        fillColor: Colors.lightGreen,
+        selectedColor: Colors.white,
+        borderColor: Colors.grey[200],
+        borderWidth: 3,
+        selectedBorderColor: Colors.deepOrange,
+        splashColor: Colors.yellow,
+        borderRadius: BorderRadius.circular(30),
+        children: [
+          Text('Normal',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Release',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Keep',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+        ],
+        onPressed: (int index) {
+          setState(() {
+            for (int buttonIndex = 0;
+                buttonIndex < isSelected5.length;
+                buttonIndex++) {
+              if (buttonIndex == index) {
+                isSelected5[buttonIndex] = true;
+              } else {
+                isSelected5[buttonIndex] = false;
               }
-            });
-          },
-          isSelected: isSelected5,
-        ),
+              print("Normal Release Keep : ${isSelected5}");
+
+              if (isSelected5[0]) {
+                _mode2 = 'Normal';
+              }
+
+              if (isSelected5[1]) {
+                _mode2 = 'Release';
+              }
+
+              if (isSelected5[2]) {
+                _mode2 = 'Keep';
+              }
+            }
+          });
+        },
+        isSelected: isSelected5,
       ),
     );
   }
@@ -949,87 +943,84 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_airwash(double fontsize) {
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: Container(
-        margin: EdgeInsets.only(left: 6, right: 6, top: 2),
-        height: 30,
-        //width: 170,
-                decoration: BoxDecoration(                
-                  color: Colors.grey,
-                  //border: Border.all(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                ),
-        
-        child: ToggleButtons(
-          //constraints: BoxConstraints.expand(height: 30, width: 50),
-          //color:Colors.grey[700],
-          
-          fillColor: Colors.lightGreen,
-          selectedColor: Colors.white,
-          borderColor: Colors.orange,
-          borderWidth: 2,
-          selectedBorderColor: Colors.orange,
-          splashColor: Colors.green,
-          borderRadius: BorderRadius.circular(30),
-          children: [
-            Text('No',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('1times',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('2times',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('3times',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-          ],
-          onPressed: (int index) {
-            setState(() {
-              for (int buttonIndex = 0;
-                  buttonIndex < isSelected4.length;
-                  buttonIndex++) {
-                if (buttonIndex == index) {
-                  isSelected4[buttonIndex] = true;
-                } else {
-                  isSelected4[buttonIndex] = false;
-                }
-                print("Air-Wash : ${isSelected4}");
+    return Container(
+      margin: EdgeInsets.only(left: 6, right: 6, top: 2),
+      height: 30,
+      //width: 170,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        //border: Border.all(color: Colors.black, width: 1.0),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
 
-                if (isSelected4[0]) {
-                  _airWash = '0';
-                }
+      child: ToggleButtons(
+        //constraints: BoxConstraints.expand(height: 30, width: 50),
+        //color:Colors.grey[700],
 
-                if (isSelected4[1]) {
-                  _airWash = '1';
-                }
-
-                if (isSelected4[2]) {
-                  _airWash = '2';
-                }
-
-                if (isSelected4[3]) {
-                  _airWash = '3';
-                }
+        fillColor: Colors.lightGreen,
+        selectedColor: Colors.white,
+        borderColor: Colors.grey[200],
+        borderWidth: 3,
+        selectedBorderColor: Colors.deepOrange,
+        splashColor: Colors.yellow,
+        borderRadius: BorderRadius.circular(30),
+        children: [
+          Text('No',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('1times',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('2times',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('3times',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+        ],
+        onPressed: (int index) {
+          setState(() {
+            for (int buttonIndex = 0;
+                buttonIndex < isSelected4.length;
+                buttonIndex++) {
+              if (buttonIndex == index) {
+                isSelected4[buttonIndex] = true;
+              } else {
+                isSelected4[buttonIndex] = false;
               }
-            });
-          },
-          isSelected: isSelected4,
-        ),
+              print("Air-Wash : ${isSelected4}");
+
+              if (isSelected4[0]) {
+                _airWash = '0';
+              }
+
+              if (isSelected4[1]) {
+                _airWash = '1';
+              }
+
+              if (isSelected4[2]) {
+                _airWash = '2';
+              }
+
+              if (isSelected4[3]) {
+                _airWash = '3';
+              }
+            }
+          });
+        },
+        isSelected: isSelected4,
       ),
     );
   }
@@ -1037,77 +1028,74 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_InertGas(double fontsize) {
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: Container(
-        margin: EdgeInsets.only(left: 6, top: 2),
-        height: 30,
-        //width: 170,
-                decoration: BoxDecoration(                
-                  color: Colors.grey,
-                  //border: Border.all(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                ),
-        
-        child: ToggleButtons(
-          //constraints: BoxConstraints.expand(height: 30, width: 50),
-          //color:Colors.grey[700],
-          
-          fillColor: Colors.lightGreen,
-          selectedColor: Colors.white,
-          borderColor: Colors.orange,
-          borderWidth: 2,
-          selectedBorderColor: Colors.orange,
-          splashColor: Colors.green,
-          borderRadius: BorderRadius.circular(30),
-          children: [
-            Text('No',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Argon',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Nitrogen',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-          ],
-          onPressed: (int index) {
-            setState(() {
-              for (int buttonIndex = 0;
-                  buttonIndex < isSelected3.length;
-                  buttonIndex++) {
-                if (buttonIndex == index) {
-                  isSelected3[buttonIndex] = true;
-                } else {
-                  isSelected3[buttonIndex] = false;
-                }
-                print("Inert-Gas : ${isSelected3}");
+    return Container(
+      margin: EdgeInsets.only(left: 6, top: 2),
+      height: 30,
+      //width: 170,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        //border: Border.all(color: Colors.black, width: 1.0),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
 
-                if (isSelected3[0]) {
-                  _inertGas = 'No';
-                }
+      child: ToggleButtons(
+        //constraints: BoxConstraints.expand(height: 30, width: 50),
+        //color:Colors.grey[700],
 
-                if (isSelected3[1]) {
-                  _inertGas = 'Argon';
-                }
-
-                if (isSelected3[2]) {
-                  _inertGas = 'Nitrogen';
-                }
+        fillColor: Colors.lightGreen,
+        selectedColor: Colors.white,
+        borderColor: Colors.grey[200],
+        borderWidth: 3,
+        selectedBorderColor: Colors.deepOrange,
+        splashColor: Colors.yellow,
+        borderRadius: BorderRadius.circular(30),
+        children: [
+          Text('No',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Argon',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Nitrogen',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+        ],
+        onPressed: (int index) {
+          setState(() {
+            for (int buttonIndex = 0;
+                buttonIndex < isSelected3.length;
+                buttonIndex++) {
+              if (buttonIndex == index) {
+                isSelected3[buttonIndex] = true;
+              } else {
+                isSelected3[buttonIndex] = false;
               }
-            });
-          },
-          isSelected: isSelected3,
-        ),
+              print("Inert-Gas : ${isSelected3}");
+
+              if (isSelected3[0]) {
+                _inertGas = 'No';
+              }
+
+              if (isSelected3[1]) {
+                _inertGas = 'Argon';
+              }
+
+              if (isSelected3[2]) {
+                _inertGas = 'Nitrogen';
+              }
+            }
+          });
+        },
+        isSelected: isSelected3,
       ),
     );
   }
@@ -1115,64 +1103,61 @@ class _HomepageState extends State<Homepage> {
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Widget build_manual_auto_button(double fontsize) {
-    return FittedBox(
-      fit: BoxFit.fill,
-      child: Container(
-        margin: EdgeInsets.only(left: 6, top: 2),
-        height: 30,
-        //width: 170,
-                decoration: BoxDecoration(                
-                  color: Colors.grey,
-                  //border: Border.all(color: Colors.black, width: 1.0),
-                  borderRadius: BorderRadius.all(Radius.circular(30.0)),
-                ),
-        
-        child: ToggleButtons(
-          //constraints: BoxConstraints.expand(height: 30, width: 50),
-          //color:Colors.grey[700],
-          
-          fillColor: Colors.lightGreen,
-          selectedColor: Colors.white,
-          borderColor: Colors.orange,
-          borderWidth: 2,
-          selectedBorderColor: Colors.orange,
-          splashColor: Colors.green,
-          borderRadius: BorderRadius.circular(30),
-          children: [
-            Text('Manual',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-            Text('Auto',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                    fontSize: fontsize,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black)),
-          ],
-          onPressed: (int index) {
-            setState(() {
-              for (int buttonIndex = 0;
-                  buttonIndex < isSelected2.length;
-                  buttonIndex++) {
-                if (buttonIndex == index) {
-                  isSelected2[buttonIndex] = true;
-                } else {
-                  isSelected2[buttonIndex] = false;
-                }
-                print("Manaul Auto : ${isSelected2}");
-                if (isSelected2[0]) {
-                  _mode1 = 'Manual';
-                } else {
-                  _mode1 = 'Auto';
-                }
+    return Container(
+      margin: EdgeInsets.only(left: 6, top: 2),
+      height: 30,
+      //width: 170,
+      decoration: BoxDecoration(
+        color: Colors.grey,
+        //border: Border.all(color: Colors.black, width: 1.0),
+        borderRadius: BorderRadius.all(Radius.circular(30.0)),
+      ),
+
+      child: ToggleButtons(
+        //constraints: BoxConstraints.expand(height: 30, width: 50),
+        //color:Colors.grey[700],
+
+        fillColor: Colors.lightGreen,
+        selectedColor: Colors.white,
+        borderColor: Colors.grey[200],
+        borderWidth: 3,
+        selectedBorderColor: Colors.deepOrange,
+        splashColor: Colors.yellow,
+        borderRadius: BorderRadius.circular(30),
+        children: [
+          Text('Manual',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+          Text('Auto',
+              textAlign: TextAlign.center,
+              style: TextStyle(
+                  fontSize: fontsize,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black)),
+        ],
+        onPressed: (int index) {
+          setState(() {
+            for (int buttonIndex = 0;
+                buttonIndex < isSelected2.length;
+                buttonIndex++) {
+              if (buttonIndex == index) {
+                isSelected2[buttonIndex] = true;
+              } else {
+                isSelected2[buttonIndex] = false;
               }
-            });
-          },
-          isSelected: isSelected2,
-        ),
+              print("Manaul Auto : ${isSelected2}");
+              if (isSelected2[0]) {
+                _mode1 = 'Manual';
+              } else {
+                _mode1 = 'Auto';
+              }
+            }
+          });
+        },
+        isSelected: isSelected2,
       ),
     );
   }
@@ -2267,7 +2252,8 @@ class _HomepageState extends State<Homepage> {
                   .getCount(SQLiteHeltper().tbl_vcc_castlog)
                   .then((value) async {
                 if (value! > 20) {
-                  popup_error('Please delete 1 Recipe to save the current Recipe.');
+                  popup_error(
+                      'Please delete 1 Recipe to save the current Recipe.');
                   print("Please delete 1 Recipe to save the current Recipe.");
                 } else {
                   //1. Insert to MySQL
@@ -2344,7 +2330,9 @@ class _HomepageState extends State<Homepage> {
       child: ElevatedButton(
         child: Text("Recipe List",
             style: TextStyle(
-                color: Colors.black, fontSize: 10, fontWeight: FontWeight.bold),
+                color: Colors.black,
+                fontSize: 11,
+                fontWeight: FontWeight.bold),
             textAlign: TextAlign.center),
         style: ElevatedButton.styleFrom(
           backgroundColor: Colors.transparent,
@@ -2504,40 +2492,45 @@ class _HomepageState extends State<Homepage> {
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   Container build_timestamp() {
     return Container(
-      margin: EdgeInsets.only(left: 6, top: 6),
+      
+      margin: EdgeInsets.only(left: 6, top: 8),
       height: 30,
-      width: 170,
-      color: Colors.transparent,
-      child: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: Text(
-          show_timestamp!,
-          textAlign: TextAlign.center,
-          style: TextStyle(
-              color: Colors.black, fontSize: 14, fontWeight: FontWeight.normal),
-        ),
+      //width: 170,
+      //color: Colors.red,
+      child: Text(
+        'Timestamp: $show_timestamp',
+        textAlign: TextAlign.center,
+        style: TextStyle(
+            color: Colors.black, fontSize: 14, fontWeight: FontWeight.normal),
       ),
     );
   }
+
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-  Container build_serialnumber() {
+  Widget build_serialnumber() {
     return Container(
       margin: EdgeInsets.only(left: 6, top: 0),
       height: 30,
       width: 170,
-      color: Colors.lightBlueAccent,
+      //color: Colors.lightBlueAccent,
+      decoration: BoxDecoration(
+        color: Colors.lightBlueAccent,
+        borderRadius: BorderRadius.all(Radius.circular(10)),
+        border: Border.all(width: 1, color: MyConstant.dark),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(6.0),
+        padding: const EdgeInsets.all(2.0),
         child: Text(
           _serialNumber!,
           textAlign: TextAlign.center,
           style: TextStyle(
-              color: Colors.black, fontSize: 14, fontWeight: FontWeight.normal),
+              color: Colors.black, fontSize: 18, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -2568,8 +2561,8 @@ class _HomepageState extends State<Homepage> {
                 child: Text(
                   'M/C name',
                   style: TextStyle(
-                    fontSize: 10,
-                    fontWeight: FontWeight.normal,
+                    fontSize: 13.5,
+                    fontWeight: FontWeight.bold,
                     color: Colors.black,
                   ),
                   overflow: TextOverflow.ellipsis,

@@ -163,7 +163,7 @@ class _SettingDBState extends State<SettingDB> {
             controller: inputbox,
             textAlign: TextAlign.start,
             decoration: InputDecoration(
-              labelText: 'Server:',
+              labelText: 'Server',
               prefixIcon: Icon(
                 Icons.cloud_queue_rounded,
                 color: MyConstant.dark,
@@ -209,7 +209,7 @@ class _SettingDBState extends State<SettingDB> {
             controller: inputbox,
             textAlign: TextAlign.start,
             decoration: InputDecoration(
-              labelText: 'Username:',
+              labelText: 'Username',
               prefixIcon: Icon(
                 Icons.account_circle_outlined,
                 color: MyConstant.dark,
@@ -272,7 +272,7 @@ class _SettingDBState extends State<SettingDB> {
                         color: MyConstant.dark,
                       ),
               ),
-              labelText: 'Password:',
+              labelText: 'Password',
               prefixIcon: Icon(
                 Icons.lock_outlined,
                 color: MyConstant.dark,
@@ -318,7 +318,7 @@ class _SettingDBState extends State<SettingDB> {
             controller: inputbox,
             textAlign: TextAlign.start,
             decoration: InputDecoration(
-              labelText: 'Database name:',
+              labelText: 'Database name',
               prefixIcon: Icon(
                 Icons.table_rows_sharp,
                 color: MyConstant.dark,

@@ -6,7 +6,7 @@ class MyConstant {
 
   // Route
   static String routeHomepage = '/homepage';
-  static String routeInputpage = '/inputpage';
+  //static String routeInputpage = '/inputpage';
   static String routeRecipelistpage = '/recipelistpage';
   static String routeSettingDBpage = '/settingDBpage';
 
