@@ -174,6 +174,8 @@ class _HomepageState extends State<Homepage> {
       // Read From Server
 
       try {
+
+        
         String api_get_machinename_sn =
             'http://$server/vcc_castlog/get_data.php?server=$server&user=$username&password=$password&db_name=$databasename';
 
@@ -190,7 +192,7 @@ class _HomepageState extends State<Homepage> {
           }
         });
       } on DioException catch (e) {
-        popup_error('Cannot access server.\r\nPlease check the internet.');
+        popup_error('Cannot access server.\r\nPlease check the internet.\r\n\r\n(1) Turn on WiFi on your tablet??\r\n(2) Check the connection of LAN-Cable on the router in the factory\r\n(3) If (1)&(2) is no problem, Can you open "Google"?');
       }
     });
   }
@@ -222,15 +224,15 @@ class _HomepageState extends State<Homepage> {
       builder: (context) => AlertDialog(
         title: ListTile(
           //leading: ShowImage(path: MyConstant.confirm),
-          leading: Icon(
-            Icons.error_outline,
-            color: Colors.red,
-            size: 50,
-          ),
+          // leading: Icon(
+          //   Icons.error_outline,
+          //   color: Colors.red,
+          //   size: 50,
+          // ),
           title: Text(
             msg,
             style: TextStyle(
-                fontSize: 20, fontWeight: FontWeight.normal, color: Colors.red),
+                fontSize: 16, fontWeight: FontWeight.normal, color: Colors.red),
           ),
           //subtitle: Text('Are you sure?', style: TextStyle(color: Colors.teal),),
         ),
@@ -563,7 +565,7 @@ class _HomepageState extends State<Homepage> {
                       children: [
                         Column(
                           children: [
-                            buildTitle('Mode1', 6, 5),
+                            buildTitle('Casting Mode', 6, 5),
                             build_manual_auto_button(14),
                           ],
                         ),
@@ -605,7 +607,7 @@ class _HomepageState extends State<Homepage> {
                       children: [
                         Column(
                           children: [
-                            buildTitle('Mode2', 6, 5),
+                            buildTitle('EXH-Type', 6, 5),
                             build_normal_release_keep(14),
                           ],
                         ),
@@ -744,7 +746,7 @@ class _HomepageState extends State<Homepage> {
         fillColor: Colors.lightGreen,
         selectedColor: Colors.white,
         borderColor: Colors.grey[200],
-        borderWidth: 3,
+        borderWidth: 1,
         selectedBorderColor: Colors.deepOrange,
         splashColor: Colors.yellow,
         borderRadius: BorderRadius.circular(30),
@@ -885,7 +887,7 @@ class _HomepageState extends State<Homepage> {
         fillColor: Colors.lightGreen,
         selectedColor: Colors.white,
         borderColor: Colors.grey[200],
-        borderWidth: 3,
+        borderWidth: 1,
         selectedBorderColor: Colors.deepOrange,
         splashColor: Colors.yellow,
         borderRadius: BorderRadius.circular(30),
@@ -960,7 +962,7 @@ class _HomepageState extends State<Homepage> {
         fillColor: Colors.lightGreen,
         selectedColor: Colors.white,
         borderColor: Colors.grey[200],
-        borderWidth: 3,
+        borderWidth: 1,
         selectedBorderColor: Colors.deepOrange,
         splashColor: Colors.yellow,
         borderRadius: BorderRadius.circular(30),
@@ -971,7 +973,7 @@ class _HomepageState extends State<Homepage> {
                   fontSize: fontsize,
                   fontWeight: FontWeight.bold,
                   color: Colors.black)),
-          Text('1times',
+          Text('1time',
               textAlign: TextAlign.center,
               style: TextStyle(
                   fontSize: fontsize,
@@ -1045,7 +1047,7 @@ class _HomepageState extends State<Homepage> {
         fillColor: Colors.lightGreen,
         selectedColor: Colors.white,
         borderColor: Colors.grey[200],
-        borderWidth: 3,
+        borderWidth: 1,
         selectedBorderColor: Colors.deepOrange,
         splashColor: Colors.yellow,
         borderRadius: BorderRadius.circular(30),
@@ -1120,7 +1122,7 @@ class _HomepageState extends State<Homepage> {
         fillColor: Colors.lightGreen,
         selectedColor: Colors.white,
         borderColor: Colors.grey[200],
-        borderWidth: 3,
+        borderWidth: 1,
         selectedBorderColor: Colors.deepOrange,
         splashColor: Colors.yellow,
         borderRadius: BorderRadius.circular(30),
